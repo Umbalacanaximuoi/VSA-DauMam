@@ -1,0 +1,367 @@
+{
+  "created_at": "2026-10-10 09:53:21",
+  "t0_features": [
+    "rs_rating_60",
+    "rs_rating_120",
+    "vdu_ratio_20",
+    "vol_up_down_ratio",
+    "deposit_count_20",
+    "obv_slope",
+    "base_depth_pct",
+    "vcp_ratio",
+    "dist_to_52w_high",
+    "is_near_52w_high",
+    "close_vs_ma10",
+    "close_vs_ma20",
+    "close_vs_ma50",
+    "close_vs_ma200",
+    "ma_alignment_score",
+    "t0_chg_pct",
+    "t0_vol_ratio_ma20",
+    "t0_vol_ratio_ma50",
+    "t0_close_pos",
+    "t0_upper_wick_ratio",
+    "t0_spread_ratio",
+    "tennis_ball_score",
+    "sector_wave_score",
+    "vni_regime",
+    "vni_chg_pct",
+    "vni_vs_ma20",
+    "vni_vs_ma50"
+  ],
+  "validated_features": [
+    "rs_rating_60",
+    "rs_rating_120",
+    "vdu_ratio_20",
+    "vol_up_down_ratio",
+    "deposit_count_20",
+    "obv_slope",
+    "base_depth_pct",
+    "vcp_ratio",
+    "dist_to_52w_high",
+    "is_near_52w_high",
+    "close_vs_ma10",
+    "close_vs_ma20",
+    "close_vs_ma50",
+    "close_vs_ma200",
+    "ma_alignment_score",
+    "t0_chg_pct",
+    "t0_vol_ratio_ma20",
+    "t0_vol_ratio_ma50",
+    "t0_close_pos",
+    "t0_upper_wick_ratio",
+    "t0_spread_ratio",
+    "tennis_ball_score",
+    "sector_wave_score",
+    "vni_regime",
+    "vni_chg_pct",
+    "vni_vs_ma20",
+    "vni_vs_ma50",
+    "day2_ret_pct",
+    "day2_held_50pct",
+    "day2_vol_ratio"
+  ],
+  "model_t0_metrics": {
+    "val_auc": 0.634264532356229,
+    "val_pr_auc": 0.18942493962625953,
+    "test_auc": 0.6054427779693081,
+    "test_pr_auc": 0.11900134256907643,
+    "best_iteration": 12,
+    "top_features": [
+      {
+        "feature": "close_vs_ma200",
+        "importance_gain": 2690.657706260681,
+        "importance_split": 40
+      },
+      {
+        "feature": "vni_vs_ma50",
+        "importance_gain": 2682.115026473999,
+        "importance_split": 39
+      },
+      {
+        "feature": "t0_upper_wick_ratio",
+        "importance_gain": 2463.949604034424,
+        "importance_split": 10
+      },
+      {
+        "feature": "t0_chg_pct",
+        "importance_gain": 1852.3695888519287,
+        "importance_split": 27
+      },
+      {
+        "feature": "t0_close_pos",
+        "importance_gain": 1709.2174987792969,
+        "importance_split": 23
+      },
+      {
+        "feature": "vni_chg_pct",
+        "importance_gain": 1366.5923099517822,
+        "importance_split": 32
+      },
+      {
+        "feature": "vni_vs_ma20",
+        "importance_gain": 1361.747402191162,
+        "importance_split": 28
+      },
+      {
+        "feature": "dist_to_52w_high",
+        "importance_gain": 1142.812297821045,
+        "importance_split": 26
+      },
+      {
+        "feature": "rs_rating_60",
+        "importance_gain": 705.0305976867676,
+        "importance_split": 15
+      },
+      {
+        "feature": "vcp_ratio",
+        "importance_gain": 615.4364051818848,
+        "importance_split": 13
+      },
+      {
+        "feature": "t0_spread_ratio",
+        "importance_gain": 565.510799407959,
+        "importance_split": 16
+      },
+      {
+        "feature": "rs_rating_120",
+        "importance_gain": 536.9027042388916,
+        "importance_split": 11
+      },
+      {
+        "feature": "close_vs_ma50",
+        "importance_gain": 462.44799041748047,
+        "importance_split": 9
+      },
+      {
+        "feature": "vdu_ratio_20",
+        "importance_gain": 428.32050037384033,
+        "importance_split": 11
+      },
+      {
+        "feature": "base_depth_pct",
+        "importance_gain": 400.46669578552246,
+        "importance_split": 9
+      },
+      {
+        "feature": "close_vs_ma20",
+        "importance_gain": 349.67670345306396,
+        "importance_split": 12
+      },
+      {
+        "feature": "obv_slope",
+        "importance_gain": 289.2238960266113,
+        "importance_split": 9
+      },
+      {
+        "feature": "close_vs_ma10",
+        "importance_gain": 286.2131004333496,
+        "importance_split": 9
+      },
+      {
+        "feature": "t0_vol_ratio_ma50",
+        "importance_gain": 196.6767978668213,
+        "importance_split": 6
+      },
+      {
+        "feature": "vol_up_down_ratio",
+        "importance_gain": 191.95739841461182,
+        "importance_split": 7
+      },
+      {
+        "feature": "tennis_ball_score",
+        "importance_gain": 147.14370155334473,
+        "importance_split": 5
+      },
+      {
+        "feature": "deposit_count_20",
+        "importance_gain": 60.106698989868164,
+        "importance_split": 2
+      },
+      {
+        "feature": "t0_vol_ratio_ma20",
+        "importance_gain": 28.08690071105957,
+        "importance_split": 1
+      },
+      {
+        "feature": "is_near_52w_high",
+        "importance_gain": 0.0,
+        "importance_split": 0
+      },
+      {
+        "feature": "ma_alignment_score",
+        "importance_gain": 0.0,
+        "importance_split": 0
+      },
+      {
+        "feature": "sector_wave_score",
+        "importance_gain": 0.0,
+        "importance_split": 0
+      },
+      {
+        "feature": "vni_regime",
+        "importance_gain": 0.0,
+        "importance_split": 0
+      }
+    ]
+  },
+  "model_validated_metrics": {
+    "val_auc": 0.6952843332091252,
+    "val_pr_auc": 0.244714634940837,
+    "test_auc": 0.688515976046794,
+    "test_pr_auc": 0.1858315539530816,
+    "best_iteration": 11,
+    "top_features": [
+      {
+        "feature": "day2_ret_pct",
+        "importance_gain": 16588.929752349854,
+        "importance_split": 44
+      },
+      {
+        "feature": "vni_vs_ma20",
+        "importance_gain": 1791.3804950714111,
+        "importance_split": 33
+      },
+      {
+        "feature": "day2_held_50pct",
+        "importance_gain": 1753.7962684631348,
+        "importance_split": 8
+      },
+      {
+        "feature": "t0_close_pos",
+        "importance_gain": 1613.2163848876953,
+        "importance_split": 27
+      },
+      {
+        "feature": "close_vs_ma200",
+        "importance_gain": 1548.2972946166992,
+        "importance_split": 30
+      },
+      {
+        "feature": "vni_vs_ma50",
+        "importance_gain": 1350.9011898040771,
+        "importance_split": 28
+      },
+      {
+        "feature": "t0_upper_wick_ratio",
+        "importance_gain": 861.792085647583,
+        "importance_split": 9
+      },
+      {
+        "feature": "base_depth_pct",
+        "importance_gain": 625.5998973846436,
+        "importance_split": 13
+      },
+      {
+        "feature": "dist_to_52w_high",
+        "importance_gain": 569.6292095184326,
+        "importance_split": 13
+      },
+      {
+        "feature": "t0_chg_pct",
+        "importance_gain": 551.303503036499,
+        "importance_split": 13
+      },
+      {
+        "feature": "vni_chg_pct",
+        "importance_gain": 522.1113014221191,
+        "importance_split": 13
+      },
+      {
+        "feature": "rs_rating_60",
+        "importance_gain": 462.7121925354004,
+        "importance_split": 10
+      },
+      {
+        "feature": "day2_vol_ratio",
+        "importance_gain": 343.7206001281738,
+        "importance_split": 11
+      },
+      {
+        "feature": "t0_spread_ratio",
+        "importance_gain": 339.2295970916748,
+        "importance_split": 12
+      },
+      {
+        "feature": "t0_vol_ratio_ma20",
+        "importance_gain": 332.0614013671875,
+        "importance_split": 10
+      },
+      {
+        "feature": "rs_rating_120",
+        "importance_gain": 316.3350944519043,
+        "importance_split": 8
+      },
+      {
+        "feature": "vol_up_down_ratio",
+        "importance_gain": 297.34229850769043,
+        "importance_split": 9
+      },
+      {
+        "feature": "close_vs_ma50",
+        "importance_gain": 290.0275058746338,
+        "importance_split": 7
+      },
+      {
+        "feature": "vcp_ratio",
+        "importance_gain": 280.27989387512207,
+        "importance_split": 8
+      },
+      {
+        "feature": "vdu_ratio_20",
+        "importance_gain": 222.35680389404297,
+        "importance_split": 6
+      },
+      {
+        "feature": "tennis_ball_score",
+        "importance_gain": 158.9810028076172,
+        "importance_split": 5
+      },
+      {
+        "feature": "t0_vol_ratio_ma50",
+        "importance_gain": 132.8234043121338,
+        "importance_split": 4
+      },
+      {
+        "feature": "close_vs_ma20",
+        "importance_gain": 131.21479988098145,
+        "importance_split": 4
+      },
+      {
+        "feature": "obv_slope",
+        "importance_gain": 87.67570114135742,
+        "importance_split": 3
+      },
+      {
+        "feature": "close_vs_ma10",
+        "importance_gain": 65.42460060119629,
+        "importance_split": 2
+      },
+      {
+        "feature": "deposit_count_20",
+        "importance_gain": 0.0,
+        "importance_split": 0
+      },
+      {
+        "feature": "is_near_52w_high",
+        "importance_gain": 0.0,
+        "importance_split": 0
+      },
+      {
+        "feature": "ma_alignment_score",
+        "importance_gain": 0.0,
+        "importance_split": 0
+      },
+      {
+        "feature": "sector_wave_score",
+        "importance_gain": 0.0,
+        "importance_split": 0
+      },
+      {
+        "feature": "vni_regime",
+        "importance_gain": 0.0,
+        "importance_split": 0
+      }
+    ]
+  }
+}

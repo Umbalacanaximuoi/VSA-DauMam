@@ -1,0 +1,186 @@
+{
+  "GIAI ĐOẠN 2007 - 2020 (Lịch sử dài hạn)": [
+    {
+      "threshold": 0,
+      "label": "Tất cả Breakout thị trường (Baseline)",
+      "n_trades": 17957,
+      "super_count": 2388,
+      "super_rate": 13.298435150637633,
+      "win_rate": 67.77858216851367,
+      "avg_return": 9.706832931556876,
+      "profit_factor": 5.807104218200961,
+      "rr_ratio": 2.7606527817361566
+    },
+    {
+      "threshold": 75,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 75 Điểm",
+      "n_trades": 5265,
+      "super_count": 1566,
+      "super_rate": 29.743589743589745,
+      "win_rate": 81.53846153846153,
+      "avg_return": 21.34316033446853,
+      "profit_factor": 17.583786771100552,
+      "rr_ratio": 3.9812347406265403
+    },
+    {
+      "threshold": 85,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 85 Điểm",
+      "n_trades": 3271,
+      "super_count": 1167,
+      "super_rate": 35.67716294711097,
+      "win_rate": 83.36900030571691,
+      "avg_return": 25.671031211028474,
+      "profit_factor": 23.09153988194535,
+      "rr_ratio": 4.6064531337654095
+    },
+    {
+      "threshold": 90,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 90 Điểm",
+      "n_trades": 2228,
+      "super_count": 914,
+      "super_rate": 41.02333931777379,
+      "win_rate": 84.38061041292639,
+      "avg_return": 29.07213470158754,
+      "profit_factor": 27.66641256283946,
+      "rr_ratio": 5.121229559504326
+    }
+  ],
+  "GIAI ĐOẠN 2021 - 2023 (Sóng thần 2021 & Rũ bỏ 2022)": [
+    {
+      "threshold": 0,
+      "label": "Tất cả Breakout thị trường (Baseline)",
+      "n_trades": 9251,
+      "super_count": 1200,
+      "super_rate": 12.971570641011782,
+      "win_rate": 64.52275429683277,
+      "avg_return": 9.547431148706412,
+      "profit_factor": 5.0979578507253285,
+      "rr_ratio": 2.803065449167453
+    },
+    {
+      "threshold": 75,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 75 Điểm",
+      "n_trades": 2193,
+      "super_count": 532,
+      "super_rate": 24.259005927952575,
+      "win_rate": 75.33059735522116,
+      "avg_return": 18.332190978290193,
+      "profit_factor": 11.775259934438589,
+      "rr_ratio": 3.8561837920891504
+    },
+    {
+      "threshold": 85,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 85 Điểm",
+      "n_trades": 1236,
+      "super_count": 353,
+      "super_rate": 28.559870550161815,
+      "win_rate": 75.97087378640776,
+      "avg_return": 21.78636393015707,
+      "profit_factor": 14.174141789468742,
+      "rr_ratio": 4.483195006892669
+    },
+    {
+      "threshold": 90,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 90 Điểm",
+      "n_trades": 800,
+      "super_count": 251,
+      "super_rate": 31.374999999999996,
+      "win_rate": 75.75,
+      "avg_return": 24.8135700497303,
+      "profit_factor": 15.769982172458501,
+      "rr_ratio": 5.048476141018068
+    }
+  ],
+  "GIAI ĐOẠN 2024 - 2026 (Thực nghiệm Out-Of-Sample)": [
+    {
+      "threshold": 0,
+      "label": "Tất cả Breakout thị trường (Baseline)",
+      "n_trades": 6115,
+      "super_count": 491,
+      "super_rate": 8.029435813573182,
+      "win_rate": 69.27228127555192,
+      "avg_return": 6.802691930197665,
+      "profit_factor": 4.5520844635948094,
+      "rr_ratio": 2.019208382222532
+    },
+    {
+      "threshold": 75,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 75 Điểm",
+      "n_trades": 873,
+      "super_count": 168,
+      "super_rate": 19.243986254295535,
+      "win_rate": 85.4524627720504,
+      "avg_return": 17.595802929330375,
+      "profit_factor": 18.55558395120619,
+      "rr_ratio": 3.1589264903527967
+    },
+    {
+      "threshold": 85,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 85 Điểm",
+      "n_trades": 491,
+      "super_count": 123,
+      "super_rate": 25.050916496945007,
+      "win_rate": 89.0020366598778,
+      "avg_return": 22.6603346151299,
+      "profit_factor": 30.98982290034711,
+      "rr_ratio": 3.829406033452504
+    },
+    {
+      "threshold": 90,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 90 Điểm",
+      "n_trades": 305,
+      "super_count": 88,
+      "super_rate": 28.852459016393446,
+      "win_rate": 87.8688524590164,
+      "avg_return": 26.866795630506058,
+      "profit_factor": 32.63850450696659,
+      "rr_ratio": 4.506062189394641
+    }
+  ],
+  "TOÀN BỘ 20 NĂM LỊCH SỬ (2007 - 2026)": [
+    {
+      "threshold": 0,
+      "label": "Tất cả Breakout thị trường (Baseline)",
+      "n_trades": 33323,
+      "super_count": 4079,
+      "super_rate": 12.240794646340365,
+      "win_rate": 67.14881613300123,
+      "avg_return": 9.12965056152833,
+      "profit_factor": 5.375860791407478,
+      "rr_ratio": 2.630029857147732
+    },
+    {
+      "threshold": 75,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 75 Điểm",
+      "n_trades": 8331,
+      "super_count": 2266,
+      "super_rate": 27.199615892449884,
+      "win_rate": 80.31448805665586,
+      "avg_return": 20.15788860084895,
+      "profit_factor": 15.754469331723147,
+      "rr_ratio": 3.8615049624908027
+    },
+    {
+      "threshold": 85,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 85 Điểm",
+      "n_trades": 4998,
+      "super_count": 1643,
+      "super_rate": 32.87314925970388,
+      "win_rate": 82.09283713485395,
+      "avg_return": 24.414588476385966,
+      "profit_factor": 20.630648842499607,
+      "rr_ratio": 4.5002268374450765
+    },
+    {
+      "threshold": 90,
+      "label": "Hệ Thống Lọc Siêu Cổ Phiếu >= 90 Điểm",
+      "n_trades": 3333,
+      "super_count": 1253,
+      "super_rate": 37.593759375937594,
+      "win_rate": 82.62826282628262,
+      "avg_return": 27.848168263494035,
+      "profit_factor": 24.020323616623436,
+      "rr_ratio": 5.050024464061354
+    }
+  ]
+}

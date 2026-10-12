@@ -1,0 +1,1784 @@
+[
+  {
+    "symbol": "GMD",
+    "time": "2026-10-09",
+    "close": 55.0,
+    "chg_pct": 1.48,
+    "volume": 1195900,
+    "vol_ratio": 1.17,
+    "sector": "VAN_TAI_BIEN",
+    "super_stock_score": 11.3,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng VAN_TAI_BIEN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 89.6,
+        "status": "Kiệt cung 60%, VCP 1.41"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 61.1,
+        "status": "Vol x1.2, Đóng 100% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 51.15 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 77.0 - 88.0)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": 1.5,
+      "vdu_ratio_20": 60.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -5.1,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "VPB",
+    "time": "2026-10-09",
+    "close": 23.8,
+    "chg_pct": 1.49,
+    "volume": 20155900,
+    "vol_ratio": 0.91,
+    "sector": "NGAN_HANG",
+    "super_stock_score": 20.5,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng NGAN_HANG bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 90.6,
+        "status": "Kiệt cung 50%, VCP 0.98"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 47.8,
+        "status": "Vol x0.9, Đóng 79% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 22.13 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 33.32 - 38.08)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": 8.2,
+      "vdu_ratio_20": 50.0,
+      "deposit_count": 3,
+      "dist_to_52w_high": -11.9,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "FRT",
+    "time": "2026-10-09",
+    "close": 149.6,
+    "chg_pct": -0.86,
+    "volume": 514500,
+    "vol_ratio": 0.75,
+    "sector": "BAN_LE",
+    "super_stock_score": 24.8,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng BAN_LE bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 94.1,
+        "status": "Kiệt cung 50%, VCP 0.86"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 32.6,
+        "status": "Vol x0.7, Đóng 48% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 139.13 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 209.44 - 239.36)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": 26.7,
+      "vdu_ratio_20": 50.0,
+      "deposit_count": 3,
+      "dist_to_52w_high": -13.2,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "STB",
+    "time": "2026-10-09",
+    "close": 67.3,
+    "chg_pct": 0.0,
+    "volume": 2677000,
+    "vol_ratio": 0.92,
+    "sector": "NGAN_HANG",
+    "super_stock_score": 23.3,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng NGAN_HANG bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 82.7,
+        "status": "Kiệt cung 45%, VCP 1.04"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 42.3,
+        "status": "Vol x0.9, Đóng 64% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 62.59 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 94.22 - 107.68)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -9.4,
+      "vdu_ratio_20": 45.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -14.8,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "PVT",
+    "time": "2026-10-09",
+    "close": 25.2,
+    "chg_pct": -1.37,
+    "volume": 7094800,
+    "vol_ratio": 0.85,
+    "sector": "VAN_TAI_BIEN",
+    "super_stock_score": 30.8,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng VAN_TAI_BIEN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 66.2,
+        "status": "Kiệt cung 30%, VCP 0.99"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 23.7,
+        "status": "Vol x0.9, Đóng 21% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 23.44 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 35.28 - 40.32)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": 26.2,
+      "vdu_ratio_20": 30.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -15.2,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "ACB",
+    "time": "2026-10-09",
+    "close": 20.15,
+    "chg_pct": -0.98,
+    "volume": 11569900,
+    "vol_ratio": 1.44,
+    "sector": "NGAN_HANG",
+    "super_stock_score": 23.3,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng NGAN_HANG bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 66.4,
+        "status": "Kiệt cung 30%, VCP 0.99"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 26.0,
+        "status": "Vol x1.4, Đóng 0% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 18.74 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 28.21 - 32.24)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -16.8,
+      "vdu_ratio_20": 30.0,
+      "deposit_count": 0,
+      "dist_to_52w_high": -15.5,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "MWG",
+    "time": "2026-10-09",
+    "close": 75.9,
+    "chg_pct": -0.26,
+    "volume": 2801400,
+    "vol_ratio": 0.94,
+    "sector": "BAN_LE",
+    "super_stock_score": 17.0,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng BAN_LE bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 72.4,
+        "status": "Kiệt cung 40%, VCP 1.19"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 49.7,
+        "status": "Vol x0.9, Đóng 82% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 70.59 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 106.26 - 121.44)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -3.3,
+      "vdu_ratio_20": 40.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -17.3,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "MBB",
+    "time": "2026-10-09",
+    "close": 19.05,
+    "chg_pct": 0.79,
+    "volume": 14094300,
+    "vol_ratio": 1.22,
+    "sector": "NGAN_HANG",
+    "super_stock_score": 29.4,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng NGAN_HANG bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 87.3,
+        "status": "Kiệt cung 45%, VCP 0.89"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 54.0,
+        "status": "Vol x1.2, Đóng 80% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 17.72 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 26.67 - 30.48)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -11.8,
+      "vdu_ratio_20": 45.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -19.4,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "TCB",
+    "time": "2026-10-09",
+    "close": 32.35,
+    "chg_pct": 1.41,
+    "volume": 15207700,
+    "vol_ratio": 0.92,
+    "sector": "NGAN_HANG",
+    "super_stock_score": 21.6,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng NGAN_HANG bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 68.6,
+        "status": "Kiệt cung 30%, VCP 0.91"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 53.8,
+        "status": "Vol x0.9, Đóng 93% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 30.09 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 45.29 - 51.76)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -4.5,
+      "vdu_ratio_20": 30.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -21.4,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "IDC",
+    "time": "2026-10-09",
+    "close": 35.5,
+    "chg_pct": 1.72,
+    "volume": 1793000,
+    "vol_ratio": 1.2,
+    "sector": "OTHER",
+    "super_stock_score": 18.2,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng OTHER bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 83.5,
+        "status": "Kiệt cung 45%, VCP 1.02"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 58.3,
+        "status": "Vol x1.2, Đóng 92% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 33.02 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 49.7 - 56.8)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": 1.3,
+      "vdu_ratio_20": 45.0,
+      "deposit_count": 3,
+      "dist_to_52w_high": -22.3,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "HPG",
+    "time": "2026-10-09",
+    "close": 20.1,
+    "chg_pct": -0.25,
+    "volume": 15779800,
+    "vol_ratio": 0.89,
+    "sector": "THEP",
+    "super_stock_score": 21.6,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng THEP bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 81.1,
+        "status": "Kiệt cung 45%, VCP 1.10"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 41.0,
+        "status": "Vol x0.9, Đóng 62% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 18.69 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 28.14 - 32.16)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -15.7,
+      "vdu_ratio_20": 45.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -24.3,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "HAH",
+    "time": "2026-10-09",
+    "close": 50.3,
+    "chg_pct": -2.9,
+    "volume": 1283700,
+    "vol_ratio": 1.05,
+    "sector": "VAN_TAI_BIEN",
+    "super_stock_score": 18.7,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng VAN_TAI_BIEN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 80.5,
+        "status": "Kiệt cung 45%, VCP 1.12"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 18.9,
+        "status": "Vol x1.1, Đóng 0% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 46.78 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 70.42 - 80.48)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -1.9,
+      "vdu_ratio_20": 45.0,
+      "deposit_count": 4,
+      "dist_to_52w_high": -27.0,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "PVS",
+    "time": "2026-10-09",
+    "close": 33.9,
+    "chg_pct": -0.88,
+    "volume": 5242200,
+    "vol_ratio": 1.25,
+    "sector": "DAU_KHI",
+    "super_stock_score": 14.1,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng DAU_KHI bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 90.0,
+        "status": "Kiệt cung 45%, VCP 0.80"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 30.6,
+        "status": "Vol x1.3, Đóng 20% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 31.53 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 47.46 - 54.24)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -0.2,
+      "vdu_ratio_20": 45.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -27.9,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "TNG",
+    "time": "2026-10-09",
+    "close": 18.3,
+    "chg_pct": -2.66,
+    "volume": 907400,
+    "vol_ratio": 1.62,
+    "sector": "OTHER",
+    "super_stock_score": 10.8,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng OTHER bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 93.7,
+        "status": "Kiệt cung 70%, VCP 1.68"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 39.1,
+        "status": "Vol x1.6, Đóng 25% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 17.02 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 25.62 - 29.28)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": 1.5,
+      "vdu_ratio_20": 70.0,
+      "deposit_count": 4,
+      "dist_to_52w_high": -29.1,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "DCM",
+    "time": "2026-10-09",
+    "close": 34.85,
+    "chg_pct": 1.31,
+    "volume": 2688500,
+    "vol_ratio": 0.87,
+    "sector": "PHAN_BON",
+    "super_stock_score": 27.5,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng PHAN_BON bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 59.6,
+        "status": "Kiệt cung 25%, VCP 1.01"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 53.9,
+        "status": "Vol x0.9, Đóng 96% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 32.41 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 48.79 - 55.76)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -1.4,
+      "vdu_ratio_20": 25.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -30.3,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "CTR",
+    "time": "2026-10-09",
+    "close": 69.0,
+    "chg_pct": 0.0,
+    "volume": 315600,
+    "vol_ratio": 1.45,
+    "sector": "OTHER",
+    "super_stock_score": 9.3,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng OTHER bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 91.4,
+        "status": "Kiệt cung 50%, VCP 0.95"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 66.0,
+        "status": "Vol x1.4, Đóng 100% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 64.17 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 96.6 - 110.4)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -9.8,
+      "vdu_ratio_20": 50.0,
+      "deposit_count": 3,
+      "dist_to_52w_high": -30.4,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "HSG",
+    "time": "2026-10-09",
+    "close": 9.9,
+    "chg_pct": -0.1,
+    "volume": 2001100,
+    "vol_ratio": 0.99,
+    "sector": "THEP",
+    "super_stock_score": 21.6,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng THEP bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 74.6,
+        "status": "Kiệt cung 40%, VCP 1.11"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 42.8,
+        "status": "Vol x1.0, Đóng 62% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 9.21 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 13.86 - 15.84)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -19.3,
+      "vdu_ratio_20": 40.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -32.8,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "PVD",
+    "time": "2026-10-09",
+    "close": 18.2,
+    "chg_pct": -0.27,
+    "volume": 5418700,
+    "vol_ratio": 1.0,
+    "sector": "DAU_KHI",
+    "super_stock_score": 21.6,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng DAU_KHI bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 93.8,
+        "status": "Kiệt cung 50%, VCP 0.87"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 17.9,
+        "status": "Vol x1.0, Đóng 0% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 16.93 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 25.48 - 29.12)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -13.5,
+      "vdu_ratio_20": 50.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -33.2,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "KBC",
+    "time": "2026-10-09",
+    "close": 25.5,
+    "chg_pct": 0.39,
+    "volume": 1075500,
+    "vol_ratio": 0.82,
+    "sector": "BAT_DONG_SAN",
+    "super_stock_score": 23.8,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng BAT_DONG_SAN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 73.0,
+        "status": "Kiệt cung 40%, VCP 1.17"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 40.2,
+        "status": "Vol x0.8, Đóng 64% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 23.71 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 35.7 - 40.8)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -15.5,
+      "vdu_ratio_20": 40.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -33.2,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "DPM",
+    "time": "2026-10-09",
+    "close": 21.9,
+    "chg_pct": -1.13,
+    "volume": 1957900,
+    "vol_ratio": 0.6,
+    "sector": "PHAN_BON",
+    "super_stock_score": 21.6,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng PHAN_BON bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 62.3,
+        "status": "Kiệt cung 25%, VCP 0.92"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 14.8,
+        "status": "Vol x0.6, Đóng 10% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 20.37 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 30.66 - 35.04)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -9.1,
+      "vdu_ratio_20": 25.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -34.7,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "SSI",
+    "time": "2026-10-09",
+    "close": 19.0,
+    "chg_pct": -0.26,
+    "volume": 26053200,
+    "vol_ratio": 1.18,
+    "sector": "CHUNG_KHOAN",
+    "super_stock_score": 21.6,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng CHUNG_KHOAN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 87.7,
+        "status": "Kiệt cung 50%, VCP 1.08"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 34.6,
+        "status": "Vol x1.2, Đóng 33% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 17.67 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 26.6 - 30.4)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -12.0,
+      "vdu_ratio_20": 50.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -39.7,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "FPT",
+    "time": "2026-10-09",
+    "close": 57.9,
+    "chg_pct": -3.02,
+    "volume": 10851700,
+    "vol_ratio": 1.89,
+    "sector": "OTHER",
+    "super_stock_score": 10.8,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng OTHER bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 80.7,
+        "status": "Kiệt cung 50%, VCP 1.31"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 40.4,
+        "status": "Vol x1.9, Đóng 16% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 53.85 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 81.06 - 92.64)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -14.4,
+      "vdu_ratio_20": 50.0,
+      "deposit_count": 0,
+      "dist_to_52w_high": -40.6,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "VCI",
+    "time": "2026-10-09",
+    "close": 18.55,
+    "chg_pct": 0.0,
+    "volume": 10693700,
+    "vol_ratio": 1.22,
+    "sector": "CHUNG_KHOAN",
+    "super_stock_score": 40.7,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng CHUNG_KHOAN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 73.8,
+        "status": "Kiệt cung 40%, VCP 1.14"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 38.6,
+        "status": "Vol x1.2, Đóng 42% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 17.25 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 25.97 - 29.68)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -25.7,
+      "vdu_ratio_20": 40.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -43.3,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "VGI",
+    "time": "2026-10-09",
+    "close": 77.3,
+    "chg_pct": -1.02,
+    "volume": 313600,
+    "vol_ratio": 1.2,
+    "sector": "OTHER",
+    "super_stock_score": 21.6,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng OTHER bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 95,
+        "status": "Kiệt cung 55%, VCP 0.74"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 37.5,
+        "status": "Vol x1.2, Đóng 40% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 71.89 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 108.22 - 123.68)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -7.9,
+      "vdu_ratio_20": 55.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -43.4,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "NKG",
+    "time": "2026-10-09",
+    "close": 9.29,
+    "chg_pct": 1.53,
+    "volume": 2574900,
+    "vol_ratio": 1.51,
+    "sector": "THEP",
+    "super_stock_score": 25.6,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng THEP bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 56.2,
+        "status": "Kiệt cung 35%, VCP 1.53"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 58.5,
+        "status": "Vol x1.5, Đóng 78% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 8.64 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 13.01 - 14.86)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -26.3,
+      "vdu_ratio_20": 35.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -43.9,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "NLG",
+    "time": "2026-10-09",
+    "close": 21.9,
+    "chg_pct": -0.23,
+    "volume": 1248000,
+    "vol_ratio": 0.79,
+    "sector": "BAT_DONG_SAN",
+    "super_stock_score": 21.6,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng BAT_DONG_SAN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 63.7,
+        "status": "Kiệt cung 30%, VCP 1.08"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 30.2,
+        "status": "Vol x0.8, Đóng 40% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 20.37 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 30.66 - 35.04)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -18.4,
+      "vdu_ratio_20": 30.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -44.4,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "VND",
+    "time": "2026-10-09",
+    "close": 13.2,
+    "chg_pct": 0.76,
+    "volume": 17614400,
+    "vol_ratio": 1.67,
+    "sector": "CHUNG_KHOAN",
+    "super_stock_score": 10.8,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng CHUNG_KHOAN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 72.7,
+        "status": "Kiệt cung 40%, VCP 1.18"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 54.1,
+        "status": "Vol x1.7, Đóng 60% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 12.28 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 18.48 - 21.12)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -30.4,
+      "vdu_ratio_20": 40.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -44.9,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "MBS",
+    "time": "2026-10-09",
+    "close": 14.7,
+    "chg_pct": 0.0,
+    "volume": 4908000,
+    "vol_ratio": 1.76,
+    "sector": "CHUNG_KHOAN",
+    "super_stock_score": 22.0,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng CHUNG_KHOAN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 77.6,
+        "status": "Kiệt cung 50%, VCP 1.41"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 60.6,
+        "status": "Vol x1.8, Đóng 72% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 13.67 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 20.58 - 23.52)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -31.7,
+      "vdu_ratio_20": 50.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -47.3,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "SHS",
+    "time": "2026-10-09",
+    "close": 11.7,
+    "chg_pct": 0.86,
+    "volume": 19215900,
+    "vol_ratio": 2.3,
+    "sector": "CHUNG_KHOAN",
+    "super_stock_score": 33.2,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng CHUNG_KHOAN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 82.6,
+        "status": "Kiệt cung 55%, VCP 1.45"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 67.1,
+        "status": "Vol x2.3, Đóng 64% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 10.88 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 16.38 - 18.72)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -35.8,
+      "vdu_ratio_20": 55.0,
+      "deposit_count": 2,
+      "dist_to_52w_high": -56.8,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "PDR",
+    "time": "2026-10-09",
+    "close": 11.3,
+    "chg_pct": 1.8,
+    "volume": 9396600,
+    "vol_ratio": 2.35,
+    "sector": "BAT_DONG_SAN",
+    "super_stock_score": 33.2,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng BAT_DONG_SAN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 76.5,
+        "status": "Kiệt cung 40%, VCP 1.05"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 77.3,
+        "status": "Vol x2.3, Đóng 87% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 10.51 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 15.82 - 18.08)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -23.7,
+      "vdu_ratio_20": 40.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -58.1,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "DGC",
+    "time": "2026-10-09",
+    "close": 33.8,
+    "chg_pct": 4.0,
+    "volume": 503600,
+    "vol_ratio": 0.75,
+    "sector": "PHAN_BON",
+    "super_stock_score": 49.1,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng PHAN_BON bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 77.6,
+        "status": "Kiệt cung 45%, VCP 1.21"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 49.9,
+        "status": "Vol x0.8, Đóng 91% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 31.43 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 47.32 - 54.08)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -15.2,
+      "vdu_ratio_20": 45.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -58.7,
+      "day2_held_50pct": 1
+    }
+  },
+  {
+    "symbol": "DIG",
+    "time": "2026-10-09",
+    "close": 9.4,
+    "chg_pct": 1.08,
+    "volume": 7428200,
+    "vol_ratio": 2.1,
+    "sector": "BAT_DONG_SAN",
+    "super_stock_score": 49.1,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng BAT_DONG_SAN bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 79.1,
+        "status": "Kiệt cung 50%, VCP 1.36"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 60.9,
+        "status": "Vol x2.1, Đóng 58% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 45.0,
+        "status": "Chờ test cung"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 8.74 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 13.16 - 15.04)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -25.9,
+      "vdu_ratio_20": 50.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -60.3,
+      "day2_held_50pct": 0
+    }
+  },
+  {
+    "symbol": "PNJ",
+    "time": "2026-10-09",
+    "close": 19.5,
+    "chg_pct": 6.85,
+    "volume": 7146800,
+    "vol_ratio": 0.6,
+    "sector": "BAN_LE",
+    "super_stock_score": 25.1,
+    "tier_badge": "⚪ TRUNG BÌNH / BỎ QUA",
+    "tier_code": "BRONZE",
+    "expected_mfe": "< +15%",
+    "pillars": {
+      "gio_dong": {
+        "name": "Gió Đông (VN-Index Macro)",
+        "score": 85,
+        "status": "Thuận lợi (Uptrend)"
+      },
+      "dan_soi": {
+        "name": "Thuyết Đàn Sói (Sóng Ngành)",
+        "score": 65.0,
+        "status": "Dòng BAN_LE bảo trợ"
+      },
+      "nen_gia": {
+        "name": "Nền Giá & Cạn Cung (VDU / VCP)",
+        "score": 95,
+        "status": "Kiệt cung 75%, VCP 1.03"
+      },
+      "xung_luc": {
+        "name": "Xung Lực Đột Biến (SOS Surge)",
+        "score": 50.8,
+        "status": "Vol x0.6, Đóng 100% đỉnh"
+      },
+      "tennis_ball": {
+        "name": "Quả Bóng Tennis & Cây Nến Thứ 2",
+        "score": 85,
+        "status": "Giữ vững >50% thân nến (Zero-Đỉnh)"
+      }
+    },
+    "capital_plan": {
+      "entry_bet": "Giải ngân Cược 30 - 40% vị thế tiền mặt tại điểm Pivot/Nền số 2",
+      "entry_scale": "Gia tăng Kim Tự Tháp 30 - 40% khi Cây nến thứ 2 (Day 2) xác nhận xanh",
+      "stop_loss": "Cắt lỗ tuyệt đối Zero-Loss tại 18.14 (-7.0%) - Không thương lượng",
+      "target": "Mục tiêu sóng < +15% (Kỳ vọng vùng 27.3 - 31.2)",
+      "margin_trigger": "Chỉ kích hoạt Margin khi danh mục đã có đệm lãi an toàn >= +10%"
+    },
+    "features_summary": {
+      "rs_rating_60": -63.4,
+      "vdu_ratio_20": 75.0,
+      "deposit_count": 1,
+      "dist_to_52w_high": -77.0,
+      "day2_held_50pct": 1
+    }
+  }
+]

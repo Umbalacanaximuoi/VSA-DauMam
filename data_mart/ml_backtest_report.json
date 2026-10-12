@@ -1,0 +1,232 @@
+{
+  "train_period": "2007-01-01 -> 2021-12-31",
+  "val_period": "2022-01-01 -> 2023-12-31",
+  "test_period": "2024-01-01 -> 2026-09-22",
+  "tiers": {
+    "tier1_cuoc": {
+      "name": "Tầng 1: Điểm Mua Cược (Zero-Loss)",
+      "test_total_signals": 51038,
+      "baseline_winrate_pct": 33.96,
+      "threshold_performance": {
+        "P >= 40%": {
+          "signals": 20617,
+          "win_count": 10068,
+          "winrate_pct": 48.83,
+          "improvement_pct": 14.87
+        },
+        "P >= 50%": {
+          "signals": 10781,
+          "win_count": 6265,
+          "winrate_pct": 58.11,
+          "improvement_pct": 24.15
+        },
+        "P >= 55%": {
+          "signals": 8261,
+          "win_count": 5095,
+          "winrate_pct": 61.68,
+          "improvement_pct": 27.71
+        },
+        "P >= 60%": {
+          "signals": 6231,
+          "win_count": 4125,
+          "winrate_pct": 66.2,
+          "improvement_pct": 32.24
+        },
+        "P >= 65%": {
+          "signals": 4434,
+          "win_count": 3135,
+          "winrate_pct": 70.7,
+          "improvement_pct": 36.74
+        },
+        "P >= 70%": {
+          "signals": 2955,
+          "win_count": 2236,
+          "winrate_pct": 75.67,
+          "improvement_pct": 41.71
+        }
+      },
+      "top_features": [
+        {
+          "feature": "close_vs_ma20",
+          "gain_pct": 34.4
+        },
+        {
+          "feature": "chg_pct",
+          "gain_pct": 8.14
+        },
+        {
+          "feature": "vni_vs_ma20",
+          "gain_pct": 6.48
+        },
+        {
+          "feature": "vni_chg_pct",
+          "gain_pct": 6.27
+        },
+        {
+          "feature": "vol_ratio_ma20",
+          "gain_pct": 6.03
+        },
+        {
+          "feature": "rsi14",
+          "gain_pct": 5.81
+        },
+        {
+          "feature": "close_vs_ma50",
+          "gain_pct": 4.52
+        },
+        {
+          "feature": "base_20_spread_pct",
+          "gain_pct": 3.86
+        }
+      ]
+    },
+    "tier2_pocket": {
+      "name": "Tầng 2: Điểm Đẩy Nền (Pocket Pivot)",
+      "test_total_signals": 9795,
+      "baseline_winrate_pct": 24.82,
+      "threshold_performance": {
+        "P >= 40%": {
+          "signals": 1766,
+          "win_count": 700,
+          "winrate_pct": 39.64,
+          "improvement_pct": 14.82
+        },
+        "P >= 50%": {
+          "signals": 465,
+          "win_count": 257,
+          "winrate_pct": 55.27,
+          "improvement_pct": 30.45
+        },
+        "P >= 55%": {
+          "signals": 289,
+          "win_count": 164,
+          "winrate_pct": 56.75,
+          "improvement_pct": 31.93
+        },
+        "P >= 60%": {
+          "signals": 126,
+          "win_count": 73,
+          "winrate_pct": 57.94,
+          "improvement_pct": 33.12
+        },
+        "P >= 65%": {
+          "signals": 7,
+          "win_count": 5,
+          "winrate_pct": 71.43,
+          "improvement_pct": 46.61
+        }
+      },
+      "top_features": [
+        {
+          "feature": "base_20_spread_pct",
+          "gain_pct": 20.61
+        },
+        {
+          "feature": "close_vs_ma200",
+          "gain_pct": 10.82
+        },
+        {
+          "feature": "vni_vs_ma20",
+          "gain_pct": 10.01
+        },
+        {
+          "feature": "vni_chg_pct",
+          "gain_pct": 7.49
+        },
+        {
+          "feature": "chg_pct",
+          "gain_pct": 7.15
+        },
+        {
+          "feature": "dist_to_52w_high",
+          "gain_pct": 6.48
+        },
+        {
+          "feature": "close_vs_ma50",
+          "gain_pct": 6.4
+        },
+        {
+          "feature": "ma_convergence",
+          "gain_pct": 6.27
+        }
+      ]
+    },
+    "tier3_pivot": {
+      "name": "Tầng 3: Điểm Pivot / Breakout (Zero Đỉnh)",
+      "test_total_signals": 6150,
+      "baseline_winrate_pct": 54.59,
+      "threshold_performance": {
+        "P >= 40%": {
+          "signals": 5877,
+          "win_count": 3268,
+          "winrate_pct": 55.61,
+          "improvement_pct": 1.02
+        },
+        "P >= 50%": {
+          "signals": 5278,
+          "win_count": 3015,
+          "winrate_pct": 57.12,
+          "improvement_pct": 2.54
+        },
+        "P >= 55%": {
+          "signals": 4232,
+          "win_count": 2497,
+          "winrate_pct": 59.0,
+          "improvement_pct": 4.42
+        },
+        "P >= 60%": {
+          "signals": 2563,
+          "win_count": 1645,
+          "winrate_pct": 64.18,
+          "improvement_pct": 9.6
+        },
+        "P >= 65%": {
+          "signals": 1773,
+          "win_count": 1195,
+          "winrate_pct": 67.4,
+          "improvement_pct": 12.81
+        },
+        "P >= 70%": {
+          "signals": 1139,
+          "win_count": 798,
+          "winrate_pct": 70.06,
+          "improvement_pct": 15.48
+        }
+      },
+      "top_features": [
+        {
+          "feature": "chg_pct",
+          "gain_pct": 17.96
+        },
+        {
+          "feature": "spread_ratio",
+          "gain_pct": 11.06
+        },
+        {
+          "feature": "vni_vs_ma20",
+          "gain_pct": 7.78
+        },
+        {
+          "feature": "lower_wick_ratio",
+          "gain_pct": 7.4
+        },
+        {
+          "feature": "close_vs_ma200",
+          "gain_pct": 7.28
+        },
+        {
+          "feature": "vni_chg_pct",
+          "gain_pct": 6.75
+        },
+        {
+          "feature": "close_pos",
+          "gain_pct": 6.52
+        },
+        {
+          "feature": "close_vs_ma20",
+          "gain_pct": 5.56
+        }
+      ]
+    }
+  }
+}

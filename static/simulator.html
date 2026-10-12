@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VSA Đậu Mầm Pro — Trình Giả Lập Điện Thoại Desktop (Mobile Simulator)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bgStudio: '#07090E',
+            phoneBorder: '#272E3F',
+            accentEmerald: '#10B981',
+            accentSky: '#0EA5E9'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Phone bezel styling */
+    .phone-chassis {
+      box-shadow: 
+        0 0 0 12px #1E2536,
+        0 0 0 14px #334155,
+        0 25px 50px -12px rgba(0, 0, 0, 0.8),
+        0 0 60px rgba(16, 185, 129, 0.15);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dynamic-island {
+      transition: all 0.3s ease;
+    }
+    .dynamic-island:hover {
+      width: 140px;
+      height: 35px;
+    }
+    /* Hide iframe scrollbar while allowing scrolling */
+    iframe::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-bgStudio min-h-screen text-slate-100 font-sans flex flex-col overflow-x-hidden selection:bg-emerald-500 selection:text-white">
+
+  <!-- TOP CONTROL TOOLBAR -->
+  <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 px-6 py-3 flex items-center justify-between sticky top-0 z-50 shadow-md">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-black text-slate-950 text-sm shadow-md shadow-emerald-500/20">
+        📱
+      </div>
+      <div>
+        <h1 class="text-sm font-bold text-white flex items-center gap-2">
+          GIẢ LẬP ĐIỆN THOẠI DESKTOP
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold uppercase">Live Mode</span>
+        </h1>
+        <p class="text-[11px] text-slate-400">Kiểm tra Giao diện & Chức năng VSA Mobile App</p>
+      </div>
+    </div>
+
+    <!-- DEVICE & DISPLAY CONTROLS -->
+    <div class="flex items-center gap-3">
+      <!-- Device Selector -->
+      <div class="flex items-center bg-slate-950 px-2 py-1.5 rounded-xl border border-slate-800 text-xs gap-1.5">
+        <span class="text-slate-500 text-[11px] font-medium pl-1">Thiết bị:</span>
+        <button onclick="changeDevice('iphone16promax')" id="btnIphone16" class="px-2.5 py-1 rounded-lg bg-slate-800 font-bold text-emerald-400 transition">iPhone 16 Pro Max</button>
+        <button onclick="changeDevice('iphone15')" id="btnIphone15" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white font-medium transition">iPhone 15 / 16</button>
+        <button onclick="changeDevice('galaxy24')" id="btnGalaxy" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white font-medium transition">Galaxy S24</button>
+      </div>
+
+      <!-- Zoom Selector -->
+      <div class="flex items-center bg-slate-950 px-2 py-1.5 rounded-xl border border-slate-800 text-xs gap-1">
+        <button onclick="setZoom(0.85)" class="px-2 py-1 rounded text-slate-400 hover:text-white font-medium">85%</button>
+        <button onclick="setZoom(0.95)" class="px-2 py-1 rounded text-slate-400 hover:text-white font-medium">95%</button>
+        <button onclick="setZoom(1.0)" class="px-2 py-1 rounded bg-slate-800 text-white font-bold">100%</button>
+      </div>
+
+      <!-- Quick Actions -->
+      <button onclick="reloadSimulator()" title="Tải lại trang" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+      </button>
+
+      <a href="/mobile" target="_blank" title="Mở trang gốc trong tab mới" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs transition shadow-lg shadow-emerald-500/20">
+        <span>Tab Mới</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN STAGE -->
+  <main class="flex-1 flex items-center justify-center py-8 px-4">
+
+    <!-- PHONE WRAPPER -->
+    <div id="phoneWrapper" class="relative transition-all duration-300 origin-top flex flex-col items-center">
+
+      <!-- PHONE CHASSIS (TITANIUM FRAME) -->
+      <div id="phoneChassis" class="phone-chassis relative bg-slate-950 rounded-[55px] overflow-hidden flex flex-col border-[3px] border-slate-700/80" style="width: 430px; height: 900px;">
+
+        <!-- TOP SPEAKER EARPIECE & DYNAMIC ISLAND -->
+        <div class="absolute top-0 left-0 right-0 h-11 flex items-center justify-between px-7 z-30 pointer-events-none select-none">
+          <!-- Realtime Clock -->
+          <span id="statusBarClock" class="text-xs font-semibold text-white tracking-tight">19:45</span>
+          
+          <!-- Dynamic Island -->
+          <div class="dynamic-island w-28 h-7 bg-black rounded-full flex items-center justify-end px-2.5 space-x-1.5 shadow-inner">
+            <div class="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-800"></div>
+            <div class="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse"></div>
+          </div>
+
+          <!-- Icons (5G, WiFi, Battery) -->
+          <div class="flex items-center space-x-1.5 text-white">
+            <span class="text-[10px] font-bold">5G</span>
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+            <div class="w-5 h-2.5 border border-white rounded-sm p-0.5 flex items-center">
+              <div class="w-full h-full bg-emerald-400 rounded-2xs"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN IFRAME (EMBEDDED MOBILE WEB APP) -->
+        <iframe 
+          id="mobileIframe" 
+          src="/mobile" 
+          class="w-full h-full pt-10 pb-6 border-0 bg-[#0B0F19] transition-all"
+          loading="eager"
+        ></iframe>
+
+        <!-- BOTTOM HOME INDICATOR BAR -->
+        <div class="absolute bottom-1.5 left-0 right-0 flex justify-center z-30 pointer-events-none">
+          <div class="w-32 h-1 bg-white/40 rounded-full"></div>
+        </div>
+
+      </div>
+
+      <!-- DEVICE CAPTION -->
+      <div class="mt-4 text-center">
+        <p id="deviceCaption" class="text-xs font-semibold text-slate-400">Khung giả lập iPhone 16 Pro Max (430 × 900 px)</p>
+        <p class="text-[11px] text-slate-500 mt-0.5">Bạn có thể nhấp chuột, gõ phím, cuộn trang và thao tác như trên màn hình cảm ứng thật.</p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    // Update Clock in Status Bar
+    function updateClock() {
+      const now = new Date();
+      const hrs = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('statusBarClock').textContent = `${hrs}:${mins}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Device profile changer
+    const devices = {
+      iphone16promax: { w: 430, h: 900, radius: '55px', name: 'iPhone 16 Pro Max (430 × 900 px)' },
+      iphone15: { w: 393, h: 840, radius: '50px', name: 'iPhone 15 / 16 (393 × 840 px)' },
+      galaxy24: { w: 412, h: 890, radius: '42px', name: 'Samsung Galaxy S24 (412 × 890 px)' }
+    };
+
+    function changeDevice(devKey) {
+      const dev = devices[devKey];
+      if (!dev) return;
+
+      const chassis = document.getElementById('phoneChassis');
+      chassis.style.width = dev.w + 'px';
+      chassis.style.height = dev.h + 'px';
+      chassis.style.borderRadius = dev.radius;
+
+      document.getElementById('deviceCaption').textContent = `Khung giả lập ${dev.name}`;
+
+      // Update button active styles
+      ['btnIphone16', 'btnIphone15', 'btnGalaxy'].forEach(id => {
+        const btn = document.getElementById(id);
+        btn.className = 'px-2.5 py-1 rounded-lg text-slate-400 hover:text-white font-medium transition';
+      });
+
+      if (devKey === 'iphone16promax') {
+        document.getElementById('btnIphone16').className = 'px-2.5 py-1 rounded-lg bg-slate-800 font-bold text-emerald-400 transition';
+      } else if (devKey === 'iphone15') {
+        document.getElementById('btnIphone15').className = 'px-2.5 py-1 rounded-lg bg-slate-800 font-bold text-emerald-400 transition';
+      } else if (devKey === 'galaxy24') {
+        document.getElementById('btnGalaxy').className = 'px-2.5 py-1 rounded-lg bg-slate-800 font-bold text-emerald-400 transition';
+      }
+    }
+
+    function setZoom(scale) {
+      document.getElementById('phoneWrapper').style.transform = `scale(${scale})`;
+    }
+
+    function reloadSimulator() {
+      const iframe = document.getElementById('mobileIframe');
+      iframe.src = iframe.src;
+    }
+  </script>
+</body>
+</html>

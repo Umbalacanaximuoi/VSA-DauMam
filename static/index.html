@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSA ĐẬU MẦM PRO — Hệ Thống Phân Tích Dòng Tiền & Quản Trị Vốn Zero-Loss</title>
+    <!-- Google Antigravity Tailwind CSS Engine -->
+    <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+    <style>
+        body {
+            background-color: #080D14;
+            color: #F0F4F8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .active-tab {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+            border-color: #10B981 !important;
+        }
+        .card-dark {
+            background: #141E28;
+            border: 1px solid #1E2D3D;
+            border-radius: 14px;
+        }
+        .tag-pill {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .modal-backdrop.hidden {
+            display: none !important;
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0B1118; }
+        ::-webkit-scrollbar-thumb { background: #1E2D3D; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10B981; }
+    </style>
+</head>
+<body class="p-3 md:p-6">
+
+    <!-- ========================================================================= -->
+    <!-- MÀN HÌNH KHỞI ĐỘNG: KÍCH HOẠT BẢN QUYỀN (CLIENT GATEKEEPER - NO ADMIN)    -->
+    <!-- ========================================================================= -->
+    <div id="authGatekeeper" class="gatekeeper-screen max-w-md mx-auto my-8 p-6 card-dark shadow-2xl border border-slate-700/80 space-y-5">
+        <div class="text-center space-y-2">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-3xl shadow-xl shadow-emerald-900/40">
+                🌱
+            </div>
+            <h2 class="text-xl font-extrabold text-white tracking-wide">VSA ĐẬU MẦM PRO</h2>
+            <p class="text-xs text-slate-400">Hệ Thống Phân Tích Dòng Tiền &amp; Quản Trị Vốn Zero-Loss</p>
+            <div class="inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                🔒 MÀN HÌNH KÍCH HOẠT BẢN QUYỀN
+            </div>
+        </div>
+
+        <!-- HWID DISPLAY BOX -->
+        <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="flex justify-between items-center text-xs">
+                <span class="text-slate-400 font-semibold">💻 Mã Máy Của Bạn (Hardware ID):</span>
+                <button onclick="copyGatekeeperHwid()" class="text-emerald-400 hover:underline font-bold text-[11px]">📋 Sao Chép</button>
+            </div>
+            <div id="gatekeeperHwidText" class="font-mono text-sm font-bold text-emerald-400 bg-slate-950 p-2 rounded text-center tracking-wider border border-slate-800/80">
+                Đang lấy HWID...
+            </div>
+            <p class="text-[11px] text-slate-400">Gửi mã máy này cho Admin qua Zalo <strong>0988.888.888</strong> để nhận License Key mở khóa.</p>
+        </div>
+
+        <!-- STATUS BANNER -->
+        <div id="gatekeeperStatusBanner" class="p-3 rounded-xl text-xs bg-amber-500/10 border border-amber-500/30 text-amber-300">
+            <span id="gatekeeperStatusMsg">⚠️ Phần mềm chưa kích hoạt. Vui lòng nhập License Key từ Admin để mở khóa.</span>
+        </div>
+
+        <!-- ACTIVATION KEY INPUT -->
+        <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-300 block">NHẬP MÃ BẢN QUYỀN (LICENSE KEY):</label>
+            <textarea id="gatekeeperKeyInput" rows="2" placeholder="Dán mã DMVIP-... vào đây để kích hoạt" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"></textarea>
+        </div>
+
+        <button onclick="submitGatekeeperActivation()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-900/40 transition">
+            🚀 KÍCH HOẠT &amp; VÀO PHẦN MỀM
+        </button>
+
+        <div class="text-center text-xs text-slate-400 pt-1">
+            Chưa có key bản quyền? <a href="https://zalo.me" target="_blank" class="text-emerald-400 hover:underline font-semibold">Liên hệ hỗ trợ Zalo (0988.888.888)</a>
+        </div>
+
+        <!-- GHI CHÚ BẢO MẬT DÀNH CHO KHÁCH HÀNG -->
+        <div class="p-2.5 bg-slate-900/60 rounded-lg border border-slate-800 text-[11px] text-slate-400 text-center">
+            🛡️ <em>Màn hình độc lập dành riêng cho người dùng. Bảng điều khiển quản trị viên được bảo mật tại địa chỉ riêng.</em>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MÀN HÌNH CHÍNH (XUẤT HIỆN SAU KHI KÍCH HOẠT - MẶC ĐỊNH MỞ TAB 1)        -->
+    <!-- ========================================================================= -->
+    <div id="mainAppContainer" class="space-y-5 hidden" style="display: none;">
+
+        <!-- TOP HEADER & 3 MAIN TABS NAVIGATION -->
+        <header class="card-dark p-4 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-xl shadow-lg shadow-emerald-900/40">
+                    🌱
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-wide text-white">
+                        VSA ĐẬU MẦM PRO
+                    </h1>
+                    <p class="text-xs text-slate-400">Hệ Thống Phân Tích Dòng Tiền &amp; Quản Trị Vốn Kỷ Luật Zero-Loss</p>
+                </div>
+            </div>
+
+            <!-- 3 MAIN TABS (ĐỘC LẬP HOÀN TOÀN - LAZY LOADING) -->
+            <div class="flex items-center bg-slate-900/90 p-1.5 rounded-xl border border-slate-700/60 gap-1.5">
+                <button id="btnTab1" onclick="switchView('tab1')" class="active-tab px-4 py-2 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-2 text-white border border-emerald-500">
+                    <span>🧭</span> <span>Tab 1: Đánh Giá Điểm VSA</span>
+                </button>
+                <button id="btnTab2" onclick="switchView('tab2')" class="px-4 py-2 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-2 text-slate-300 hover:text-white border border-transparent">
+                    <span>🎯</span> <span>Tab 2: Chấm Điểm BDI &amp; Cảnh Báo RRBDI</span>
+                </button>
+                <button id="btnTab3" onclick="switchView('tab3')" class="px-4 py-2 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-2 text-slate-300 hover:text-white border border-transparent">
+                    <span>⚡</span> <span>Tab 3: Bộ Lọc Quét Sàn &amp; Sóng Ngành</span>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-3 text-right">
+                <div id="licenseBadge" class="text-xs cursor-pointer" onclick="openLicenseModal()">
+                    <span class="text-slate-400 block">Bản quyền:</span>
+                    <span id="licenseBadgeText" class="font-bold text-emerald-400">🟢 Đang kiểm tra...</span>
+                </div>
+                <a href="/mobile" title="Chuyển sang giao diện Mobile tối ưu" class="text-xs bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-500/40 transition flex items-center gap-1.5 font-semibold">
+                    <span>📱</span>
+                    <span>Bản Mobile</span>
+                </a>
+                <button onclick="openLicenseModal()" title="Xem thông tin bản quyền" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">
+                    🔑 Bản Quyền
+                </button>
+            </div>
+        </header>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 1: ĐÁNH GIÁ ĐIỂM VSA & BẢN KHUYẾN NGHỊ ĐI VỐN 4x2                     -->
+        <!-- ========================================================================= -->
+        <div id="viewTab1" class="tab-view space-y-5">
+            <!-- THANH TÌM KIẾM MÃ & NÚT CÂU CHUYỆN ĐẬU MẦM -->
+            <div class="card-dark p-4 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+                <div class="flex items-center gap-3 flex-1 max-w-xl">
+                    <span class="text-white text-sm md:text-base font-bold">Tra cứu cổ phiếu:</span>
+                    <div class="relative">
+                        <input type="text" id="symbolInput" value="TCB" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-base md:text-lg font-black text-emerald-400 w-32 uppercase text-center focus:outline-none focus:border-emerald-500 tracking-wider shadow-inner" onkeydown="if(event.key==='Enter') evaluateStock()">
+                    </div>
+                    <span class="text-white text-sm font-semibold">Ngày soi:</span>
+                    <input type="date" id="dateInput" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 font-medium">
+                    <button class="btn-search bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold px-5 py-2.5 rounded-xl transition shadow-md shadow-emerald-900/30 flex items-center gap-1.5 cursor-pointer" onclick="evaluateStock()">
+                        <span>🔍</span> <span>Đánh Giá VSA</span>
+                    </button>
+                    <button id="btnQuickTrackTab1" onclick="quickTrackCurrentStock()" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-sm transition shadow-md shadow-amber-900/30 flex items-center gap-1.5 cursor-pointer border border-amber-400/40" title="Đưa cổ phiếu này vào danh mục giám sát tự động của Bot Telegram RRBDI">
+                        <span>📌</span> <span>Lưu Giám Sát (Bot)</span>
+                    </button>
+                </div>
+
+                <!-- NÚT MỞ TAB CÂU CHUYỆN ĐẬU MẦM HÔM NAY (NỔI BẬT & DỄ ĐỌC) -->
+                <div class="flex items-center gap-3">
+                    <button onclick="openStoryTab()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm md:text-base transition shadow-lg shadow-emerald-900/50 flex items-center gap-2 border border-emerald-400/40 cursor-pointer">
+                        <span>🌱</span> <span>Câu chuyện Đậu Mầm hôm nay</span> <span class="text-xs bg-black/40 px-1.5 py-0.5 rounded font-mono">↗</span>
+                    </button>
+                    <span class="tag-pill bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs md:text-sm font-bold">🟢 Dữ Liệu Thời Gian Thực</span>
+                </div>
+            </div>
+
+            <!-- KHỐI CHÍNH 2 CỘT CÂN XỨNG: ĐỒNG HỒ & BẢN KHUYẾN NGHỊ ĐI VỐN 4x2 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                
+                <!-- CỘT TRÁI (6 PHẦN): ĐỒNG HỒ TỐC ĐỘ VSA & 4 CHỈ SỐ KỸ THUẬT -->
+                <div class="lg:col-span-6 space-y-4">
+                    <div class="card-dark p-6 space-y-5 shadow-xl">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                            <div>
+                                <h3 class="text-base md:text-lg font-black uppercase tracking-wider text-white">⏱️ ĐỒNG HỒ TỐC ĐỘ VSA</h3>
+                                <span class="text-sm text-white font-medium block mt-0.5">Đo lường sức mạnh &amp; gia tốc dòng tiền</span>
+                            </div>
+                            <span id="stockPhaseBadge" class="tag-pill bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 text-sm font-bold">Pha Tích Lũy / Rũ Bỏ</span>
+                        </div>
+
+                        <!-- ĐỒNG HỒ VSA TRỌNG TÂM LỚN (NÂNG CỠ CHỮ & CHỮ TRẮNG DỄ ĐỌC) -->
+                        <div class="bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl p-6 text-center border border-slate-800 shadow-inner relative overflow-hidden space-y-2">
+                            <div class="text-7xl font-black text-emerald-400 tracking-tight"><span id="vsaScoreVal">--</span><span class="text-xl font-bold text-white">/100</span></div>
+                            <div class="text-sm font-black text-white tracking-wide uppercase">ĐIỂM SỨC MẠNH VSA ĐẬU MẦM</div>
+                            <div id="stockBadge" class="inline-block px-4 py-1.5 rounded-full text-sm font-black bg-emerald-950 text-emerald-300 border border-emerald-500/40 shadow-sm">
+                                🟢 DÒNG TIỀN SMART MONEY HẤP THỤ MẠNH
+                            </div>
+                            <p id="vsaPhaseDesc" class="text-sm md:text-base text-white mt-3 max-w-md mx-auto leading-relaxed font-medium">
+                                Biên độ dao động siết chặt (Spread hẹp) quanh MA20. Lực bán cạn kiệt thể hiện qua khối lượng dưới trung bình, sẵn sàng cho nhịp đẩy giá.
+                            </p>
+                        </div>
+
+                        <!-- 4 CHỈ SỐ KỸ THUẬT CỐT LÕI (CỠ CHỮ TO, CHỮ TRẮNG TƯƠNG PHẢN CAO) -->
+                        <div>
+                            <div class="text-sm md:text-base font-bold text-white uppercase tracking-wider mb-3">4 CHỈ SỐ KỸ THUẬT QUAN YẾU:</div>
+                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                                    <span class="text-white text-sm font-bold block">Giá Đóng Cửa:</span>
+                                    <div id="closeVal" class="text-2xl font-black text-white">--</div>
+                                    <span class="text-xs text-white block font-medium">Biên độ dao động phiên</span>
+                                </div>
+                                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                                    <span class="text-white text-sm font-bold block">Khối Lượng / TB10:</span>
+                                    <div id="volR10Val" class="text-2xl font-black text-emerald-400">--</div>
+                                    <span class="text-xs text-white block font-medium">So với TB10 phiên</span>
+                                </div>
+                                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                                    <span class="text-white text-sm font-bold block">Vị Thế Đường Trung Bình:</span>
+                                    <div id="maPosVal" class="text-base font-bold text-white mt-1">--</div>
+                                    <span class="text-xs text-emerald-300 block font-medium">Xu hướng ngắn hạn</span>
+                                </div>
+                                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                                    <span class="text-white text-sm font-bold block">Chỉ Số Sức Mạnh RSI(14):</span>
+                                    <div id="rsiVal" class="text-2xl font-black text-amber-400">--</div>
+                                    <span class="text-xs text-white block font-medium">Vùng cân bằng tích lũy</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CỘT PHẢI (6 PHẦN): DỰ BÁO HỌC MÁY ML & SO KHỚP MẪU HÌNH THỰC CHIẾN -->
+                <div class="lg:col-span-6 space-y-4">
+                    <!-- KHỐI 1: DỰ BÁO XÁC SUẤT TĂNG GIÁ TỪ HỌC MÁY (ML PREDICTION) -->
+                    <div class="card-dark p-5 space-y-3.5 shadow-xl border-l-4 border-l-emerald-500">
+                        <div class="flex flex-wrap justify-between items-center border-b border-slate-800 pb-2.5 gap-2">
+                            <div>
+                                <h3 class="text-base md:text-lg font-black uppercase tracking-wider text-white flex items-center gap-2">
+                                    <span>🤖</span> DỰ BÁO XÁC SUẤT TĂNG GIÁ TỪ HỌC MÁY (ML PREDICTION)
+                                </h3>
+                                <span class="text-xs text-slate-300 block mt-0.5">
+                                    Điểm số dự báo xác suất thắng T+10 đến T+20 dựa trên Random Forest &amp; XGBoost được huấn luyện trên dữ liệu 20 năm
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span id="mlMarketRegimeBadge" class="tag-pill bg-slate-800 text-slate-300 border border-slate-700 font-bold text-xs">SIDEWAY</span>
+                                <span id="diagActionBadge" class="tag-pill bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 text-xs font-black">THEO DÕI CHỜ TÍN HIỆU</span>
+                            </div>
+                        </div>
+
+                        <!-- 3 TẦNG XÁC SUẤT ĐIỂM MUA ML -->
+                        <div class="space-y-2.5">
+                            <!-- TẦNG 1: ĐIỂM CƯỢC ZERO-LOSS -->
+                            <div class="p-2.5 bg-slate-900/90 rounded-xl border border-emerald-500/30 space-y-1.5">
+                                <div class="flex justify-between items-center text-xs md:text-sm">
+                                    <span class="font-extrabold text-emerald-400 flex items-center gap-1.5">
+                                        <span>🟢</span> Tầng 1: Điểm Cược Zero-Loss
+                                    </span>
+                                    <div class="flex items-center gap-2">
+                                        <span id="mlT1Action" class="font-bold text-xs text-emerald-400">✅ MÚC CƯỢC 1/8</span>
+                                        <strong id="mlT1Prob" class="text-emerald-400 text-base font-black font-mono">--%</strong>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div id="mlT1Bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                                </div>
+                                <div class="flex justify-between items-center text-[11px] md:text-xs text-slate-300">
+                                    <span id="mlZeroLossText">Khoảng cách đáy nền kiệt cung: --</span>
+                                    <span id="mlT1Status" class="font-semibold text-slate-400">Đánh giá: Đang phân tích...</span>
+                                </div>
+                            </div>
+
+                            <!-- TẦNG 2: ĐIỂM ĐẨY NỀN POCKET PIVOT -->
+                            <div class="p-2.5 bg-slate-900/90 rounded-xl border border-amber-500/30 space-y-1.5">
+                                <div class="flex justify-between items-center text-xs md:text-sm">
+                                    <span class="font-extrabold text-amber-400 flex items-center gap-1.5">
+                                        <span>🟡</span> Tầng 2: Điểm Đẩy Nền Pocket Pivot
+                                    </span>
+                                    <div class="flex items-center gap-2">
+                                        <span id="mlT2Action" class="font-bold text-xs text-amber-400">⛔ Chưa kích hoạt</span>
+                                        <strong id="mlT2Prob" class="text-amber-400 text-base font-black font-mono">--%</strong>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div id="mlT2Bar" class="bg-gradient-to-r from-amber-500 to-yellow-400 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                                </div>
+                                <div class="flex justify-between items-center text-[11px] md:text-xs text-slate-300">
+                                    <span id="mlPocketCondText">Độ siết nền &amp; Vol đẩy: --</span>
+                                    <span id="mlT2Status" class="font-semibold text-slate-400">Đánh giá: Đang phân tích...</span>
+                                </div>
+                            </div>
+
+                            <!-- TẦNG 3: ĐIỂM PIVOT / NỔ ZERO ĐỈNH -->
+                            <div class="p-2.5 bg-slate-900/90 rounded-xl border border-sky-500/30 space-y-1.5">
+                                <div class="flex justify-between items-center text-xs md:text-sm">
+                                    <span class="font-extrabold text-sky-400 flex items-center gap-1.5">
+                                        <span>🔵</span> Tầng 3: Điểm Pivot / Nổ Zero Đỉnh
+                                    </span>
+                                    <div class="flex items-center gap-2">
+                                        <span id="mlT3Action" class="font-bold text-xs text-sky-400">⚠️ Cảnh giác bẫy nổ xịt</span>
+                                        <strong id="mlT3Prob" class="text-sky-400 text-base font-black font-mono">--%</strong>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div id="mlT3Bar" class="bg-gradient-to-r from-sky-500 to-blue-400 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                                </div>
+                                <div class="flex justify-between items-center text-[11px] md:text-xs text-slate-300">
+                                    <span id="mlZeroDinhText">Quy tắc Zero Đỉnh: --</span>
+                                    <span id="mlT3Status" class="font-semibold text-slate-400">Đánh giá: Đang phân tích...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KHỐI 2: SO KHỚP MẪU HÌNH THỰC CHIẾN (PATTERN MATCHER) -->
+                    <div class="card-dark p-5 space-y-3 shadow-xl border-l-4 border-l-blue-500">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                            <h3 class="text-base md:text-lg font-black uppercase tracking-wider text-white flex items-center gap-2">
+                                <span>🔍</span> SO KHỚP MẪU HÌNH THỰC CHIẾN
+                            </h3>
+                            <span id="pmSimilarityScore" class="text-xl font-black text-sky-400 font-mono tracking-tight">--%</span>
+                        </div>
+
+                        <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs md:text-sm">
+                            <div class="flex flex-wrap justify-between items-center gap-2">
+                                <span class="text-slate-400">Mẫu hình nhận diện:</span>
+                                <span id="pmPatternName" class="font-black text-white text-sm">Mẫu hình VSA chuẩn</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2.5 pt-1.5 border-t border-slate-800/80">
+                                <div>
+                                    <span class="text-slate-400 block text-xs">Ca đối chiếu lịch sử:</span>
+                                    <strong id="pmReferenceStock" class="text-amber-400 font-bold text-sm">--</strong>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block text-xs">Kết quả lịch sử:</span>
+                                    <strong id="pmHistoricalResult" class="text-emerald-400 font-bold text-sm">--</strong>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block text-xs">Pha hiện tại:</span>
+                                    <strong id="pmCurrentPhase" class="text-sky-300 font-bold text-sm">--</strong>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block text-xs">Kiểm định kỷ luật:</span>
+                                    <strong id="pmDisciplineCheck" class="text-emerald-400 font-bold text-sm">--</strong>
+                                </div>
+                            </div>
+                            <div class="pt-1.5 border-t border-slate-800/80">
+                                <span class="text-slate-400 text-xs block mb-0.5">Nhận định &amp; Khuyến nghị mẫu hình:</span>
+                                <p id="pmPatternNote" class="text-xs text-slate-200 italic leading-relaxed">
+                                    Hệ thống đang sẵn sàng đối chiếu vân sóng giá và khối lượng từ 12 ca thực chiến kinh điển.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- HÌNH ẢNH MẪU HÌNH ĐỐI CHIẾU (NẾU CÓ) -->
+                        <div id="pmImageContainer" class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1 text-xs hidden">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-slate-300">Biểu đồ mẫu đối chiếu: <strong id="pmImageName" class="text-sky-400">--</strong></span>
+                                <a id="pmImageLink" href="#" target="_blank" class="text-sky-400 hover:underline font-bold">Xem ảnh lớn &nearr;</a>
+                            </div>
+                            <div id="pmImageIndicators" class="text-slate-400 text-[11px]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ========================================================================= -->
+        <!-- TAB 2: HỆ THỐNG CHẤM ĐIỂM BDI & CẢNH BÁO RỦI RO RRBDI                    -->
+        <!-- ========================================================================= -->
+        <div id="viewTab2" class="tab-view space-y-5 hidden" style="display: none;">
+            
+            <!-- HEADER TAB 2: HỆ THỐNG CHẤM ĐIỂM BDI & CẢNH BÁO RRBDI -->
+            <div class="card-dark p-4 bg-gradient-to-r from-slate-900 via-emerald-950/40 to-slate-900 flex flex-wrap justify-between items-center gap-3 border border-emerald-500/30 shadow-xl">
+                <div>
+                    <h2 class="text-base md:text-lg font-extrabold text-white flex items-center gap-2">
+                        <span>🎯</span> TAB 2: HỆ THỐNG CHẤM ĐIỂM BDI &amp; CẢNH BÁO RỦI RO RRBDI
+                    </h2>
+                    <p class="text-xs md:text-sm text-slate-300">
+                        <strong>BDI</strong> (<em>VSA Ông Bình Design Index</em> - Thang 100 điểm) &bull; 
+                        <strong>RRBDI</strong> (<em>Rủi Ro Hệ Thống BDI</em> - Quản trị vị thế &amp; Cắt lỗ kỷ luật)
+                    </p>
+                </div>
+
+                <!-- VỊ TRÍ DẤU MŨI TÊN THEO HÌNH: THỐNG KÊ DANH MỤC & TỈ LỆ LÃI/LỖ -->
+                <div class="flex flex-wrap items-center gap-3 text-xs md:text-sm">
+                    <div class="bg-slate-900/90 px-3.5 py-2 rounded-xl border border-slate-700/80 flex items-center gap-1.5 shadow-sm">
+                        <span class="text-slate-300 font-medium">Số lượng CP đang nắm giữ:</span>
+                        <strong id="headerTrackedCount" class="text-white font-mono font-bold text-sm md:text-base">0 mã</strong>
+                    </div>
+                    <div class="bg-slate-900/90 px-3.5 py-2 rounded-xl border border-slate-700/80 flex items-center gap-1.5 shadow-sm">
+                        <span class="text-slate-300 font-medium">Tỉ lệ Lãi/Lỗ:</span>
+                        <strong id="headerTotalPnl" class="font-mono font-black text-sm md:text-base text-emerald-400">+0.0%</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- THANH ĐIỀU KHIỂN CHẤM ĐIỂM BDI & NÚT XÁC NHẬN MUA -->
+            <div class="card-dark p-4 flex flex-wrap items-center justify-between gap-3 shadow-lg border border-slate-700/60">
+                <div class="flex flex-wrap items-center gap-2.5 flex-1">
+                    <span class="text-white text-xs md:text-sm font-bold">Chấm điểm BDI:</span>
+                    <div class="relative">
+                        <input type="text" id="bdiSymbolInput" value="TCB" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm md:text-base font-black text-emerald-400 w-24 uppercase text-center focus:outline-none focus:border-emerald-500 tracking-wider shadow-inner" onkeydown="if(event.key==='Enter') calculateBdiScore()">
+                    </div>
+                    <span class="text-white text-xs md:text-sm font-semibold">Ngày soi:</span>
+                    <input type="date" id="bdiDateInput" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-xs md:text-sm text-white focus:outline-none focus:border-emerald-500 font-medium">
+                    <button id="btnBdiScore" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-extrabold px-4 py-2 rounded-xl transition shadow-md shadow-emerald-900/30 flex items-center gap-1.5 cursor-pointer" onclick="calculateBdiScore()">
+                        <span>🎯</span> <span>Chấm Điểm BDI</span>
+                    </button>
+
+                    <span class="text-slate-600 hidden sm:inline">|</span>
+
+                    <!-- Ô NHẬP GIÁ MUA VÀ SỐ LƯỢNG CỔ PHIẾU TRƯỚC KHI BẤM XÁC NHẬN MUA -->
+                    <div class="flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-300 text-xs font-semibold">Giá mua:</span>
+                        <input type="number" id="bdiBuyPriceInput" step="0.05" placeholder="Giá" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-xs md:text-sm text-white font-mono w-20 text-center focus:outline-none focus:border-blue-500 font-bold">
+                    </div>
+
+                    <div class="flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-300 text-xs font-semibold">Số lượng CP:</span>
+                        <input type="number" id="bdiBuySharesInput" step="100" value="10000" placeholder="Số lượng" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-xs md:text-sm text-white font-mono w-24 text-center focus:outline-none focus:border-blue-500 font-bold">
+                    </div>
+
+                    <button id="btnConfirmBuy" class="bg-blue-600 hover:bg-blue-500 text-white text-xs md:text-sm font-extrabold px-4 py-2 rounded-xl transition shadow-md shadow-blue-900/30 flex items-center gap-1.5 cursor-pointer" onclick="confirmBuyPosition()">
+                        <span>✅</span> <span>Xác Nhận Mua</span>
+                    </button>
+                    <button id="btnQuickTrackTab2" onclick="quickTrackCurrentStock(document.getElementById('bdiSymbolInput')?.value)" class="bg-amber-600 hover:bg-amber-500 text-white text-xs md:text-sm font-extrabold px-3.5 py-2 rounded-xl transition shadow-md shadow-amber-900/30 flex items-center gap-1.5 cursor-pointer border border-amber-400/30" title="Đưa cổ phiếu này vào danh mục giám sát tự động của Bot Telegram RRBDI">
+                        <span>📌</span> <span>Lưu Giám Sát Bot</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KHỐI 1: KẾT QUẢ CHẤM ĐIỂM BDI & 8 TIÊU CHÍ ĐỊNH LƯỢNG -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                
+                <!-- CỘT TRÁI (5 PHẦN): THẺ ĐIỂM BDI & ĐIỂM MUA CHIẾN LƯỢC -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="card-dark p-6 space-y-5 shadow-xl border-t-4 border-t-emerald-500">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                            <div>
+                                <h3 class="text-base font-black uppercase tracking-wider text-white">🏆 THANG ĐIỂM BDI TỔNG HỢP</h3>
+                                <span class="text-xs text-slate-300 font-medium block mt-0.5">VSA Ông Bình Design Index &bull; Phiên soi: <strong id="bdiEvaluatedDate" class="text-amber-400 font-mono">--</strong></span>
+                            </div>
+                            <span id="bdiSymbolDisplay" class="tag-pill bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 text-base font-black font-mono">TCB</span>
+                        </div>
+
+                        <!-- ĐỒNG HỒ / METER BDI -->
+                        <div class="bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl p-5 text-center border border-slate-800 shadow-inner relative space-y-3">
+                            <div class="text-6xl font-black text-emerald-400 tracking-tight">
+                                <span id="bdiScoreVal">--</span><span class="text-xl font-bold text-slate-400">/100</span>
+                            </div>
+                            <div id="bdiTierBadge" class="inline-block px-4 py-1.5 rounded-full text-sm font-black bg-emerald-950 text-emerald-300 border border-emerald-500/40 shadow">
+                                🟢 ĐANG CHỜ CHẤM ĐIỂM
+                            </div>
+                            <div class="pt-2 border-t border-slate-800/80">
+                                <span class="text-xs text-slate-400 uppercase font-bold tracking-wider block">PHÁT HIỆN ĐIỂM MUA:</span>
+                                <div id="bdiPointName" class="text-lg font-black text-slate-400 mt-1">--</div>
+                            </div>
+                        </div>
+
+                        <!-- THÔNG SỐ GIÁ & ĐIỂM DỪNG LỖ KHUYẾN NGHỊ -->
+                        <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
+                            <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                                <span class="text-slate-400 block font-semibold">Giá Đóng Cửa:</span>
+                                <div id="bdiCloseVal" class="text-xl font-black text-white">--</div>
+                                <span id="bdiChgVal" class="text-xs text-emerald-400 font-bold block">--%</span>
+                            </div>
+                            <div class="bg-slate-900 p-3 rounded-xl border border-rose-500/40 space-y-1">
+                                <span class="text-rose-300 block font-semibold">🛑 Cắt Lỗ Cứng (Low nến):</span>
+                                <div id="bdiLowVal" class="text-xl font-black text-rose-400">--</div>
+                                <span id="bdiRiskPct" class="text-xs text-rose-300 font-bold block">Rủi ro: --%</span>
+                            </div>
+                        </div>
+
+                        <!-- NÚT XÁC NHẬN MUA NHANH -->
+                        <button onclick="confirmBuyPosition()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl font-black text-sm transition shadow-lg shadow-emerald-900/40 flex items-center justify-center gap-2 border border-emerald-400/40 cursor-pointer">
+                            <span>✅</span> <span>Xác Nhận Mua Cổ Phiếu Này Vào Danh Mục</span>
+                        </button>
+
+                        <div id="bdiAdviceBox" class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs md:text-sm text-slate-300 font-medium leading-relaxed">
+                            💡 Bấm "🎯 Chấm Điểm BDI" để tiến hành rà soát 8 tiêu chí cốt lõi và đo lường xác suất thắng.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CỘT PHẢI (7 PHẦN): BẢNG 8 TIÊU CHÍ ĐỊNH LƯỢNG BDI -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="card-dark p-6 space-y-4 shadow-xl">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                            <div>
+                                <h3 class="text-base font-black uppercase tracking-wider text-white">📊 ĐÁNH GIÁ 8 TIÊU CHÍ ĐỊNH LƯỢNG BDI</h3>
+                                <span class="text-xs text-slate-300 font-medium block mt-0.5">Xác suất thành công từ kiểm định 24.944 điểm mua thực chiến</span>
+                            </div>
+                            <span id="bdiPassCountBadge" class="tag-pill bg-blue-500/25 text-blue-300 border border-blue-500/40 text-xs md:text-sm font-bold">0/8 Tiêu Chí</span>
+                        </div>
+
+                        <!-- DANH SÁCH 8 TIÊU CHÍ -->
+                        <div id="bdiCriteriaList" class="space-y-2.5 text-xs md:text-sm">
+                            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 text-slate-400 text-center">
+                                Chưa có dữ liệu chấm điểm. Hãy nhập mã và bấm "🎯 Chấm Điểm BDI".
+                            </div>
+                        </div>
+
+                        <!-- CHỈ DẪN QUY TẮC BDI -->
+                        <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-1">
+                            <div class="text-white font-bold">📖 Thang Chuẩn Quyết Định BDI:</div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">
+                                <div class="bg-emerald-950/70 border border-emerald-500/50 p-2 rounded-lg text-emerald-300 font-bold text-center">&ge; 80đ: MÚC MẠNH</div>
+                                <div class="bg-emerald-950/40 border border-emerald-500/30 p-2 rounded-lg text-emerald-400 font-semibold text-center">65 - 79đ: MUA CHUẨN</div>
+                                <div class="bg-amber-950/60 border border-amber-500/40 p-2 rounded-lg text-amber-300 font-semibold text-center">50 - 64đ: THĂM DÒ 1/8</div>
+                                <div class="bg-rose-950/60 border border-rose-500/40 p-2 rounded-lg text-rose-300 font-semibold text-center">&lt; 50đ: CẤM MUA</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KHỐI 2: BẢNG 1 - DANH MỤC NẮM GIỮ (ĐÃ MUA) & QUẢN TRỊ VỐN RRBDI -->
+            <div class="card-dark p-5 space-y-4 shadow-xl border border-slate-700/80">
+                <div class="flex flex-wrap justify-between items-center border-b border-slate-800 pb-3 gap-2">
+                    <div>
+                        <h3 class="text-base md:text-lg font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <span>💼</span> BẢNG 1: DANH MỤC NẮM GIỮ (ĐÃ MUA) &amp; QUẢN TRỊ VỐN RRBDI
+                        </h3>
+                        <p class="text-xs md:text-sm text-slate-300 mt-0.5">
+                            Quản trị danh mục đang giải ngân &bull; <strong>Nâng tỷ trọng khi đúng</strong> (Mua bồi Breakout/Pivot) &bull; <strong>Hạ tỷ trọng / Cắt lỗ khi sai</strong> (Cảnh báo Cam/Đỏ trước 14h30)
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <button onclick="toggleTelegramConfigPanel()" class="px-3 py-1.5 rounded-lg bg-sky-500/20 text-sky-300 hover:bg-sky-500/30 border border-sky-500/40 font-bold flex items-center gap-1.5 transition">
+                            <span>🤖</span> <span>Cấu Hình Bot Telegram</span>
+                        </button>
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">🟢 An Toàn</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">🟡 Cấp 1 (Cảnh Báo Vàng)</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-orange-500/20 text-orange-300 border border-orange-500/30 font-bold">🟠 Cấp 2 (Hạ 50%)</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold">🚨 Cấp 3 (Cắt 100%)</span>
+                    </div>
+                </div>
+
+                <!-- BẢNG CẤU HÌNH BOT TELEGRAM & LỊCH QUÉT TỰ ĐỘNG (EXPANDABLE) -->
+                <div id="telegramConfigPanel" class="p-4 bg-slate-900/90 rounded-2xl border border-sky-500/30 space-y-3" style="display: none;">
+                    <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-2">
+                        <h4 class="text-sm font-extrabold text-sky-400 flex items-center gap-2">
+                            <span>📱</span> CẤU HÌNH BOT TELEGRAM &amp; LỊCH QUÉT RRBDI TỰ ĐỘNG
+                        </h4>
+                        <span class="text-xs text-slate-400">Tự động báo cáo theo 4 mốc thời gian chiến lược</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div class="space-y-1.5">
+                            <label class="text-slate-300 font-bold">Bot Token (Từ @BotFather):</label>
+                            <input type="text" id="tgBotTokenInput" placeholder="Ví dụ: 7123456789:AAH..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono focus:border-sky-500 outline-none">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-slate-300 font-bold">Chat ID (Từ @userinfobot):</label>
+                            <input type="text" id="tgChatIdInput" placeholder="Ví dụ: 123456789" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono focus:border-sky-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-xs space-y-1.5 text-slate-300">
+                        <div class="font-bold text-sky-300 flex items-center gap-1.5">
+                            <span>⏰</span> LỊCH GIÁM SÁT CHIẾN LƯỢC TỰ ĐỘNG ĐÃ THIẾT LẬP:
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 pt-1 text-[11px]">
+                            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                <strong class="text-emerald-400">⚡ 09:15 - 14:30 (Mỗi 30p)</strong><br>
+                                Quét điểm nổ <strong>Breakout (B1)</strong> khi đã có Pivot trước đó.
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                <strong class="text-sky-400">🕒 14:05 (Phiên chiều)</strong><br>
+                                Rà soát toàn bộ danh mục khi dòng tiền chiều bắt đầu định hình.
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                <strong class="text-orange-400">🔔 14:30 (Trước ATC)</strong><br>
+                                Cảnh báo thoát hàng khẩn cấp (Cấp Cam/Đỏ) trước khi đóng cửa.
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                <strong class="text-purple-400">📊 15:02 (Sau kết phiên)</strong><br>
+                                Tổng kết EOD toàn diện sau khi Metakit chốt giá đóng cửa.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <label class="flex items-center gap-2 text-xs text-slate-200 cursor-pointer">
+                            <input type="checkbox" id="tgEnabledCheckbox" checked class="rounded accent-sky-500 w-4 h-4">
+                            <span>Bật gửi thông báo Telegram</span>
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <button onclick="saveTelegramConfig()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-xs flex items-center gap-1 transition">
+                                <span>💾</span> <span>Lưu Cấu Hình</span>
+                            </button>
+                            <button onclick="testTelegramAlert()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg font-bold text-xs flex items-center gap-1 transition">
+                                <span>📲</span> <span>Bắn Thử Nghiệm</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BẢNG THEO DÕI VỊ THẾ -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs md:text-sm">
+                        <thead>
+                            <tr class="bg-slate-900/90 text-white border-b border-slate-800 uppercase font-black tracking-wider text-[11px] md:text-xs">
+                                <th class="p-3">Mã CP</th>
+                                <th class="p-3">Ngày &amp; Giá Mua</th>
+                                <th class="p-3">Số Lượng</th>
+                                <th class="p-3">Tỉ Trọng NAV</th>
+                                <th class="p-3">Điểm Đã Mua</th>
+                                <th class="p-3">Giá Hiện Tại</th>
+                                <th class="p-3">Lãi / Lỗ</th>
+                                <th class="p-3">Điểm BDI</th>
+                                <th class="p-3">Tín Hiệu Gia Tăng / Cảnh Báo RRBDI</th>
+                                <th class="p-3 text-center">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trackedPositionsTableBody" class="divide-y divide-slate-800 font-medium">
+                            <!-- Injected dynamically via loadTrackedPositions() -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- KHỐI 3: BẢNG 2 - DANH SÁCH THEO DÕI (WATCHLIST / RADAR TỰ ĐỘNG BẮT ĐIỂM MUA) -->
+            <div class="card-dark p-5 space-y-4 shadow-xl border-t-4 border-t-amber-500 border border-slate-700/80">
+                <div class="flex flex-wrap justify-between items-center border-b border-slate-800 pb-3 gap-2">
+                    <div>
+                        <h3 class="text-base md:text-lg font-black uppercase tracking-wider text-amber-400 flex items-center gap-2">
+                            <span>📡</span> BẢNG 2: DANH SÁCH THEO DÕI (WATCHLIST / RADAR BẮT ĐIỂM MUA)
+                        </h3>
+                        <p class="text-xs md:text-sm text-slate-300 mt-0.5">
+                            Sàng lọc &amp; đón đầu tín hiệu điểm mua mới (<strong>C1 Cược Chân Sóng</strong> &bull; <strong>P1 Pivot Đẩy Nền</strong> &bull; <strong>B1 Breakout Nổ Vol</strong> &bull; <strong>🔥 Vol Surge &ge;2.5x</strong>) &bull; Bot Telegram tự động báo tín hiệu trong phiên
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2.5 text-xs">
+                        <div class="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5 shadow-sm">
+                            <span class="text-slate-400 font-medium">Đang theo dõi:</span>
+                            <strong id="watchlistCountBadge" class="text-amber-400 font-mono font-bold text-sm">0 mã</strong>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-slate-900/90 px-2.5 py-1 rounded-xl border border-amber-500/40">
+                            <input type="text" id="addWatchlistInput" placeholder="MÃ CP (VD: SSI)" class="bg-transparent text-amber-300 font-bold uppercase w-28 text-xs outline-none tracking-wider" onkeydown="if(event.key==='Enter') addStockToWatchlist()">
+                            <button onclick="addStockToWatchlist()" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-bold text-xs transition cursor-pointer shadow-sm">
+                                + Thêm Radar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BẢNG THEO DÕI ĐIỂM MUA WATCHLIST -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs md:text-sm">
+                        <thead>
+                            <tr class="bg-slate-900/90 text-white border-b border-slate-800 uppercase font-black tracking-wider text-[11px] md:text-xs">
+                                <th class="p-3">Mã CP</th>
+                                <th class="p-3">Ngày Thêm</th>
+                                <th class="p-3 text-right">Giá Hiện Tại</th>
+                                <th class="p-3 text-right">% Thay Đổi</th>
+                                <th class="p-3 text-right">Vol / TB10</th>
+                                <th class="p-3 text-center">Điểm BDI</th>
+                                <th class="p-3">Tín Hiệu Điểm Mua Radar</th>
+                                <th class="p-3">Khuyến Nghị Hành Động</th>
+                                <th class="p-3 text-center">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="watchlistTableBody" class="divide-y divide-slate-800 font-medium">
+                            <!-- Injected dynamically via loadWatchlistPositions() -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+<!-- ========================================================================= -->
+        <!-- TAB 3: BỘ LỌC QUÉT SÀN & QUÉT SÓNG NGÀNH (CHUYỂN SÓNG NGÀNH VÀO ĐÂY)       -->
+        <!-- ========================================================================= -->
+        <div id="viewTab3" class="tab-view space-y-5 hidden" style="display: none;">
+            <!-- HEADER TAB 3 -->
+            <div class="card-dark p-4 bg-gradient-to-r from-slate-900 via-emerald-950/30 to-slate-900 flex flex-wrap justify-between items-center gap-3">
+                <div>
+                    <h2 class="text-base font-extrabold text-white flex items-center gap-2">
+                        <span>⚡</span> TAB 3: BỘ LỌC QUÉT THỊ TRƯỜNG &amp; QUÉT SÓNG NGÀNH (429 MÃ HOSE)
+                    </h2>
+                    <p class="text-xs text-slate-400">Sàng lọc 3 tầng điểm mua kết hợp Thuyết Đàn Sói &amp; Sóng Ngành bảo trợ</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="date" id="scanDateInput" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                    <button class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-md" onclick="runScreener()">
+                        ⚡ Bắt Đầu Quét
+                    </button>
+                    <button class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs px-3 py-2 rounded-lg border border-slate-700 transition" onclick="exportScreenerExcel()">
+                        📥 Xuất Excel
+                    </button>
+                </div>
+            </div>
+
+            <!-- KHỐI QUÉT SÓNG NGÀNH & THUYẾT ĐÀN SÓI (ĐÃ CHUYỂN VÀO ĐÂY THEO YÊU CẦU) -->
+            <div class="card-dark p-4 space-y-3.5 border-l-4 border-l-sky-500 shadow-xl">
+                <div class="flex flex-wrap justify-between items-center border-b border-slate-800 pb-2.5 gap-2">
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <h3 class="text-xs md:text-sm font-extrabold uppercase tracking-wider text-sky-400 flex items-center gap-2">
+                            <span>🐺</span> QUÉT SÓNG NGÀNH &amp; THUYẾT ĐÀN SÓI:
+                        </h3>
+                        <!-- Ô LỰA CHỌN 8 NHÓM NGÀNH -->
+                        <div class="flex items-center gap-1.5 bg-slate-900 px-2.5 py-1 rounded-xl border border-sky-500/40">
+                            <span class="text-slate-300 text-xs font-semibold">Chọn ngành:</span>
+                            <select id="sectorSelect" onchange="onSectorSelectChange()" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1 text-xs md:text-sm font-bold text-white focus:outline-none focus:border-sky-400 cursor-pointer">
+                                <option value="NGAN_HANG">🏦 Ngân Hàng (Bank)</option>
+                                <option value="CHUNG_KHOAN">📈 Chứng Khoán</option>
+                                <option value="BAT_DONG_SAN">🏢 Bất Động Sản (BĐS)</option>
+                                <option value="THEP">🏗️ Thép</option>
+                                <option value="DAU_KHI">⛽ Dầu Khí</option>
+                                <option value="BAN_LE">🛒 Bán Lẻ</option>
+                                <option value="PHAN_BON">🧪 Phân Bón</option>
+                                <option value="VAN_TAI_BIEN">🚢 Vận Tải Biển</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="sectorScoreBadge" class="text-xs font-bold text-emerald-400 font-mono">Điểm: --/100</span>
+                        <span id="sectorBadge" class="tag-pill bg-sky-500/20 text-sky-400 border border-sky-500/30">Theo dõi</span>
+                    </div>
+                </div>
+
+                <!-- THANH 8 NÚT BẤM NHANH 8 NHÓM NGÀNH CỐT LÕI -->
+                <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                    <span class="text-slate-400 font-bold text-[11px] mr-1">⚡ Chọn nhanh:</span>
+                    <button type="button" class="sector-pill-btn px-2.5 py-1 rounded-lg text-xs font-black transition cursor-pointer bg-sky-600 text-white border border-sky-400 shadow" data-sector="NGAN_HANG" onclick="loadSectorWave('NGAN_HANG')">🏦 Bank</button>
+                    <button type="button" class="sector-pill-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-slate-900 text-slate-300 hover:text-white border border-slate-700/60" data-sector="CHUNG_KHOAN" onclick="loadSectorWave('CHUNG_KHOAN')">📈 Chứng Khoán</button>
+                    <button type="button" class="sector-pill-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-slate-900 text-slate-300 hover:text-white border border-slate-700/60" data-sector="BAT_DONG_SAN" onclick="loadSectorWave('BAT_DONG_SAN')">🏢 BĐS</button>
+                    <button type="button" class="sector-pill-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-slate-900 text-slate-300 hover:text-white border border-slate-700/60" data-sector="THEP" onclick="loadSectorWave('THEP')">🏗️ Thép</button>
+                    <button type="button" class="sector-pill-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-slate-900 text-slate-300 hover:text-white border border-slate-700/60" data-sector="DAU_KHI" onclick="loadSectorWave('DAU_KHI')">⛽ Dầu Khí</button>
+                    <button type="button" class="sector-pill-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-slate-900 text-slate-300 hover:text-white border border-slate-700/60" data-sector="BAN_LE" onclick="loadSectorWave('BAN_LE')">🛒 Bán Lẻ</button>
+                    <button type="button" class="sector-pill-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-slate-900 text-slate-300 hover:text-white border border-slate-700/60" data-sector="PHAN_BON" onclick="loadSectorWave('PHAN_BON')">🧪 Phân Bón</button>
+                    <button type="button" class="sector-pill-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-slate-900 text-slate-300 hover:text-white border border-slate-700/60" data-sector="VAN_TAI_BIEN" onclick="loadSectorWave('VAN_TAI_BIEN')">🚢 Vận Tải Biển</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                    <div class="bg-slate-900 p-3 rounded-xl border border-emerald-500/30">
+                        <span class="text-slate-400 text-[11px] block">Sói Dò Đường Tiên Phong:</span>
+                        <strong id="scoutWolfVal" class="text-white text-sm block mt-0.5">--</strong>
+                        <span class="text-[10px] text-slate-400">Tiếng súng báo hiệu sóng dòng</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 text-[11px] block">Sói Đầu Đàn Leader:</span>
+                        <strong id="leaderVal" class="text-emerald-400 text-sm block mt-0.5">--</strong>
+                        <span class="text-[10px] text-slate-400">Sức mạnh xung lực dẫn dắt ngành</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 text-[11px] block">Tỷ Lệ Đàn Tiếp Ứng (&gt;MA50):</span>
+                        <strong id="tier1PctVal" class="text-sky-400 text-sm block mt-0.5">--</strong>
+                        <span class="text-[10px] text-slate-400">Độ đồng thuận toàn dòng</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-xl border border-amber-500/30">
+                        <span class="text-slate-400 text-[11px] block">Khuyến Nghị Dùng Margin:</span>
+                        <strong id="marginRecVal" class="text-amber-400 text-sm block mt-0.5">--</strong>
+                        <span class="text-[10px] text-slate-400">Độ an toàn bảo trợ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BẢNG LỌC 429 MÃ HOSE (FULL-SCREEN TABLE NHƯ WIREFRAME) -->
+            <div class="card-dark overflow-hidden">
+                <div class="p-3 bg-slate-900/90 border-b border-slate-800 flex flex-wrap justify-between items-center text-xs gap-2">
+                    <div class="scan-tabs flex flex-wrap items-center gap-2">
+                        <button id="tabAll" class="scan-tab px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold transition" onclick="filterScanTier('all')">🔥 Tất Cả (<span id="countAll">0</span>)</button>
+                        <button id="tabNo2" class="scan-tab px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-purple-300 border border-purple-500/40 font-bold transition flex items-center gap-1.5" onclick="filterScanTier('no2')"><span>🏆</span> <span>Nền Số 2 - No2 (<span id="countNo2">0</span>)</span></button>
+                        <button id="tabSuperStock" class="scan-tab px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/40 font-bold transition flex items-center gap-1.5" onclick="filterScanTier('super_stock')"><span>💎</span> <span>Siêu Cổ Phiếu AI (<span id="countSuperStock">0</span>)</span></button>
+                        <button id="tabMlPicks" class="scan-tab px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-400 border border-sky-500/30 font-bold transition" onclick="filterScanTier('ml_picks')">🤖 ML Cao (&ge;55%) (<span id="countMlPicks">0</span>)</button>
+                        <button id="tabTier1" class="scan-tab px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 font-bold transition" onclick="filterScanTier('tier1')">🟢 Tầng 1: Mua Cược (<span id="countTier1">0</span>)</button>
+                        <button id="tabTier2" class="scan-tab px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 font-bold transition" onclick="filterScanTier('tier2')">🟡 Tầng 2: Pocket (<span id="countTier2">0</span>)</button>
+                        <button id="tabTier3" class="scan-tab px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 border border-blue-500/30 font-bold transition" onclick="filterScanTier('tier3')">🔵 Tầng 3: Pivot (<span id="countTier3">0</span>)</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="loadNo2RadarOnly()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-600/30 to-indigo-600/30 hover:from-purple-600/40 hover:to-indigo-600/40 text-purple-200 border border-purple-500/50 font-extrabold text-xs flex items-center gap-1.5 transition shadow">
+                            <span>🏆</span> <span>Quét Nền Số 2 (No2)</span>
+                        </button>
+                        <button onclick="loadSuperStockRadarOnly()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500/20 to-yellow-500/20 hover:from-amber-500/30 hover:to-yellow-500/30 text-amber-300 border border-amber-500/50 font-extrabold text-xs flex items-center gap-1.5 transition shadow">
+                            <span>💎</span> <span>Quét Siêu Cổ AI</span>
+                        </button>
+                        <input type="text" id="scanSearchInput" placeholder="🔍 Lọc nhanh mã / ngành..." class="bg-slate-950 border border-slate-700 px-3 py-1.5 rounded-lg text-xs text-white w-44 focus:outline-none focus:border-emerald-500" oninput="filterScanSearch()">
+                    </div>
+                </div>
+
+
+                <div id="scanResultsContent" class="overflow-x-auto min-h-[300px]">
+                    <div class="p-8 text-center text-slate-400 text-xs">
+                        ⚡ Nhấn <strong>"Bắt Đầu Quét"</strong> để phân tích toàn bộ 429 mã sàn HOSE theo chuẩn VSA &amp; Machine Learning...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 1: LICENSE STATUS & RENEWAL MODAL -->
+    <div id="licenseModal" class="modal-backdrop hidden">
+        <div class="card-dark max-w-md w-full p-6 space-y-4 border border-slate-700 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-extrabold text-white">🔑 QUẢN LÝ BẢN QUYỀN VSA ĐẬU MẦM PRO</h3>
+                <button class="text-slate-400 hover:text-white" onclick="closeLicenseModal()">✕</button>
+            </div>
+            
+            <div class="space-y-3 text-xs">
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                    <span class="text-slate-400 font-semibold block">MÃ PHẦN CỨNG MÁY TÍNH (HARDWARE ID):</span>
+                    <div class="flex justify-between items-center">
+                        <code id="modalHwidText" class="text-emerald-400 font-bold">DM-XXXX-XXXX</code>
+                        <button class="text-emerald-400 hover:underline font-bold" onclick="copyHwid()">📋 Sao chép</button>
+                    </div>
+                </div>
+
+                <div id="licenseStatusDetail" class="space-y-2"></div>
+
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-300 block">NHẬP MÃ BẢN QUYỀN (LICENSE KEY MỚI):</label>
+                    <textarea id="licenseKeyInput" rows="2" placeholder="Dán mã DMVIP-... vào đây để kích hoạt" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono"></textarea>
+                </div>
+                
+                <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold transition shadow-lg" onclick="submitActivation()">
+                    🚀 KÍCH HOẠT PHẦN MỀM
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: EXPIRED MODAL -->
+    <div id="expiredModal" class="modal-backdrop hidden">
+        <div class="card-dark max-w-md w-full p-6 space-y-4 border border-rose-500/50 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-extrabold text-rose-400">🔒 BẢN QUYỀN VIP ĐÃ HẾT HẠN</h3>
+            </div>
+            
+            <div class="space-y-3 text-xs">
+                <p class="text-slate-300">
+                    Thời hạn sử dụng của gói bản quyền hiện tại đã kết thúc. Vui lòng quét mã QR bên dưới để gia hạn gói VIP:
+                </p>
+
+                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 flex items-center gap-4">
+                    <img id="vietQrImg" src="https://api.vietqr.io/image/970422-0988888888-compact2.jpg?amount=399000&addInfo=GIAHAN%20VSA%20PRO" alt="VietQR Payment" class="w-24 h-24 rounded-lg bg-white p-1">
+                    <div class="space-y-1 text-slate-300">
+                        <div>Gói: <strong class="text-white">VIP 30 Ngày (399.000đ)</strong></div>
+                        <div>STK: <strong class="text-white">0988888888 (MB Bank)</strong></div>
+                        <div>Nội dung CK: <code id="transferContentText" class="text-amber-400 font-bold">GIAHAN DAUMAM</code></div>
+                        <div>Mã máy: <code id="expiredHwidText" class="text-emerald-400">--</code></div>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="font-bold text-slate-300 block">ĐÃ NHẬN MÃ MỚI TỪ ADMIN? DÁN VÀO ĐÂY:</label>
+                    <input type="text" id="renewalKeyInput" placeholder="DMVIP-..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono">
+                </div>
+
+                <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold transition shadow-lg" onclick="submitRenewal()">
+                    Kích Hoạt Lại Ngay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: SUPER STOCK DETAIL & 5 PILLARS MODAL -->
+    <div id="superStockDetailModal" class="modal-backdrop hidden">
+        <div class="card-dark max-w-2xl w-full p-6 space-y-4 border border-amber-500/50 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">💎</span>
+                    <div>
+                        <h3 id="ssModalTitle" class="text-base font-black text-amber-300">RADAR SIÊU CỔ PHIẾU: --</h3>
+                        <p id="ssModalSubtitle" class="text-xs text-slate-400">Mô hình định lượng học máy 20 năm &bull; Đậu Mầm Pro</p>
+                    </div>
+                </div>
+                <button class="text-slate-400 hover:text-white text-lg font-bold p-1" onclick="closeSuperStockModal()">✕</button>
+            </div>
+
+            <!-- TỔNG QUAN XÁC SUẤT -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center text-xs">
+                <div class="p-3 bg-slate-900 rounded-xl border border-amber-500/40">
+                    <span class="text-slate-400 block text-[11px]">Xác Suất Siêu CP:</span>
+                    <strong id="ssModalScore" class="text-amber-400 text-lg block font-mono">--/100</strong>
+                    <span id="ssModalBadge" class="text-[10px] text-amber-300 font-bold">--</span>
+                </div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                    <span class="text-slate-400 block text-[11px]">Giá Hiện Tại:</span>
+                    <strong id="ssModalPrice" class="text-white text-lg block font-mono">--</strong>
+                    <span id="ssModalChg" class="text-[10px] text-slate-400">--</span>
+                </div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                    <span class="text-slate-400 block text-[11px]">Đột Biến Vol:</span>
+                    <strong id="ssModalVolRatio" class="text-sky-400 text-lg block font-mono">--x</strong>
+                    <span class="text-[10px] text-slate-400">So với TB20</span>
+                </div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-emerald-500/30">
+                    <span class="text-slate-400 block text-[11px]">Kỳ Vọng Biên Độ:</span>
+                    <strong id="ssModalMfe" class="text-emerald-400 text-lg block font-mono">+35% - +60%</strong>
+                    <span class="text-[10px] text-emerald-400">Sóng 40-60 ngày</span>
+                </div>
+            </div>
+
+            <!-- 5 TRỤ CỘT ĐỊNH LƯỢNG -->
+            <div class="space-y-2 text-xs">
+                <h4 class="font-extrabold text-white text-xs uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-800 pb-1.5">
+                    <span>🏛️</span> ĐÁNH GIÁ 5 TRỤ CỘT CẤU THÀNH SIÊU CỔ PHIẾU:
+                </h4>
+                <div id="ssModalPillars" class="space-y-2">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- KẾ HOẠCH ĐI VỐN & ZERO-LOSS -->
+            <div class="p-4 bg-slate-900/90 rounded-2xl border border-amber-500/30 space-y-2 text-xs text-slate-200">
+                <h4 class="font-bold text-amber-300 flex items-center gap-1.5 border-b border-slate-800 pb-1.5">
+                    <span>📋</span> KẾ HOẠCH GIẢI NGÂN &amp; QUẢN TRỊ RỦI RO CHIẾN LƯỢC:
+                </h4>
+                <div id="ssModalCapitalPlan" class="space-y-1.5 text-xs">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 pt-2">
+                <button id="ssModalInspectBtn" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-extrabold text-xs transition shadow-lg flex items-center justify-center gap-2">
+                    <span>🔬</span> <span>Chuyển Sang Tab 1 Chẩn Đoán Chi Tiết</span>
+                </button>
+                <button class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition border border-slate-700" onclick="closeSuperStockModal()">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: NO2 DETAIL & 6 PILLARS MODAL (CHIẾN LƯỢC SĂN NỀN SỐ 2) -->
+    <div id="no2DetailModal" class="modal-backdrop hidden">
+        <div class="card-dark max-w-2xl w-full p-6 space-y-4 border border-purple-500/50 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🏆</span>
+                    <div>
+                        <h3 id="no2ModalTitle" class="text-base font-black text-purple-300">CHIẾN LƯỢC No2: --</h3>
+                        <p id="no2ModalSubtitle" class="text-xs text-slate-400">Săn Siêu Cổ Phiếu Nền Số 2 Trên Cao &bull; Đậu Mầm Pro</p>
+                    </div>
+                </div>
+                <button class="text-slate-400 hover:text-white text-lg font-bold p-1" onclick="closeNo2Modal()">✕</button>
+            </div>
+
+            <!-- TỔNG QUAN CHỈ SỐ -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center text-xs">
+                <div class="p-3 bg-slate-900 rounded-xl border border-purple-500/40">
+                    <span class="text-slate-400 block text-[11px]">Điểm No2:</span>
+                    <strong id="no2ModalScore" class="text-purple-400 text-lg block font-mono">--/100</strong>
+                    <span id="no2ModalActionBadge" class="text-[10px] text-purple-300 font-bold">--</span>
+                </div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                    <span class="text-slate-400 block text-[11px]">Xung Lực BMS:</span>
+                    <strong id="no2ModalBmsScore" class="text-amber-400 text-lg block font-mono">--</strong>
+                    <span id="no2ModalBmsTier" class="text-[10px] text-slate-400">--</span>
+                </div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                    <span class="text-slate-400 block text-[11px]">Nền Số 2:</span>
+                    <strong id="no2ModalBaseLen" class="text-sky-400 text-lg block font-mono">-- phiên</strong>
+                    <span id="no2ModalBaseDepth" class="text-[10px] text-slate-400">Độ sâu: --%</span>
+                </div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-emerald-500/30">
+                    <span class="text-slate-400 block text-[11px]">Đáy Kiệt Vol:</span>
+                    <strong id="no2ModalMinVol" class="text-emerald-400 text-lg block font-mono">--x</strong>
+                    <span class="text-[10px] text-emerald-400">So với TB20</span>
+                </div>
+            </div>
+
+            <!-- 6 TẦNG ĐỊNH LƯỢNG -->
+            <div class="space-y-2 text-xs">
+                <h4 class="font-extrabold text-white text-xs uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-800 pb-1.5">
+                    <span>🏛️</span> ĐỐI CHIẾU 6 TẦNG ĐỊNH LƯỢNG CHIẾN LƯỢC No2:
+                </h4>
+                <div id="no2ModalPillars" class="space-y-2">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- KẾ HOẠCH ĐI VỐN THỰC CHIẾN -->
+            <div class="p-4 bg-slate-900/90 rounded-2xl border border-purple-500/30 space-y-2 text-xs text-slate-200">
+                <h4 class="font-bold text-purple-300 flex items-center gap-1.5 border-b border-slate-800 pb-1.5">
+                    <span>📋</span> KẾ HOẠCH GIẢI NGÂN CHỦ ĐỘNG TRONG NỀN 2:
+                </h4>
+                <div id="no2ModalCapitalPlan" class="space-y-1.5 text-xs">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 pt-2">
+                <button id="no2ModalInspectBtn" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs transition shadow-lg flex items-center justify-center gap-2">
+                    <span>🔬</span> <span>Chuyển Sang Tab 1 Chẩn Đoán Chi Tiết</span>
+                </button>
+                <button class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition border border-slate-700" onclick="closeNo2Modal()">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Inline failsafe switchView so tabs work immediately under any condition -->
+    <script>
+        function switchView(tabId) {
+            const cleanId = (tabId || 'tab1').toLowerCase();
+            ['tab1', 'tab2', 'tab3'].forEach(t => {
+                const idName = t.charAt(0).toUpperCase() + t.slice(1);
+                const viewEl = document.getElementById('view' + idName);
+                const b = document.getElementById('btn' + idName) || document.getElementById('mainBtn' + idName);
+                if (t === cleanId) {
+                    if (viewEl) {
+                        viewEl.classList.remove('hidden');
+                        viewEl.style.display = 'block';
+                    }
+                    if (b) {
+                        b.className = "active-tab px-4 py-2 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-2 text-white border border-emerald-500";
+                    }
+                } else {
+                    if (viewEl) {
+                        viewEl.classList.add('hidden');
+                        viewEl.style.display = 'none';
+                    }
+                    if (b) {
+                        b.className = "px-4 py-2 rounded-lg text-xs md:text-sm font-bold transition flex items-center gap-2 text-slate-300 hover:text-white border border-transparent";
+                    }
+                }
+            });
+
+            if (cleanId === 'tab3') {
+                const currentSec = document.getElementById("sectorSelect")?.value || "NGAN_HANG";
+                if (typeof loadSectorWave === 'function') loadSectorWave(currentSec);
+                if (typeof runScreener === 'function') {
+                    if (!window.currentScanData || (!window.currentScanData.tier1_cuoc?.length && !window.currentScanData.tier2_pocket?.length)) {
+                        runScreener();
+                    }
+                }
+            }
+        }
+        function switchMainTab(tabId) { switchView(tabId); }
+        function openStoryTab() {
+            const sym = document.getElementById("symbolInput")?.value.trim().toUpperCase() || "TCB";
+            const dateVal = document.getElementById("dateInput")?.value || "";
+            const url = `/static/story.html?symbol=${encodeURIComponent(sym)}${dateVal ? '&date=' + encodeURIComponent(dateVal) : ''}`;
+            window.open(url, '_blank');
+        }
+        async function diagnoseTab2Stock() {
+            const sym = document.getElementById("tab2SymbolInput")?.value.trim().toUpperCase() || "TCB";
+            const dateVal = document.getElementById("tab2DateInput")?.value || null;
+            const btn = document.getElementById("btnTab2Diagnose");
+            const statusBadge = document.getElementById("tab2StatusBadge");
+            
+            if (btn) btn.innerHTML = "<span>⏳</span> <span>Đang Quét...</span>";
+            if (statusBadge) {
+                statusBadge.innerText = "⏳ Đang Chạy Quét AI...";
+                statusBadge.className = "tag-pill bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs md:text-sm font-bold";
+            }
+            
+            try {
+                const res = await fetch("/api/evaluate", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({symbol: sym, target_date: dateVal})
+                });
+                if (res.ok) {
+                    const resJson = await res.json();
+                    if (resJson.status === "success") {
+                        if (typeof renderMLAndPatternData === 'function') {
+                            renderMLAndPatternData(
+                                resJson.ml_prediction,
+                                resJson.pattern_match,
+                                resJson.zero_loss_metrics,
+                                resJson.zero_dinh_metrics,
+                                resJson.data
+                            );
+                        }
+                        if (resJson.ai_reasoning?.diagnosis && typeof renderAcademicDiagnosis === 'function') {
+                            renderAcademicDiagnosis(resJson.ai_reasoning.diagnosis, resJson.data);
+                        }
+                        if (statusBadge) {
+                            statusBadge.innerText = `✅ Đã Chẩn Đoán (${sym})`;
+                            statusBadge.className = "tag-pill bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs md:text-sm font-bold";
+                        }
+                    } else {
+                        if (statusBadge) statusBadge.innerText = "❌ Không có dữ liệu";
+                    }
+                }
+            } catch (e) {
+                console.error("Lỗi chẩn đoán Tab 2:", e);
+                if (statusBadge) statusBadge.innerText = "❌ Lỗi kết nối";
+            } finally {
+                if (btn) btn.innerHTML = "<span>🔬</span> <span>Chẩn Đoán</span>";
+            }
+        }
+        window.switchView = switchView;
+        window.switchMainTab = switchMainTab;
+        window.openStoryTab = openStoryTab;
+        window.diagnoseTab2Stock = diagnoseTab2Stock;
+
+        // --- TELEGRAM BOT CONFIG INLINE HANDLERS ---
+        function toggleTelegramConfigPanel() {
+            const p = document.getElementById("telegramConfigPanel");
+            if (!p) return;
+            if (p.style.display === "none" || p.style.display === "") {
+                p.style.display = "block";
+                loadTelegramConfigIntoUI();
+            } else {
+                p.style.display = "none";
+            }
+        }
+
+        async function loadTelegramConfigIntoUI() {
+            try {
+                const res = await fetch("/api/telegram/config");
+                if (!res.ok) return;
+                const j = await res.json();
+                if (j.status === "success" && j.data) {
+                    const tokenInput = document.getElementById("tgBotTokenInput");
+                    const chatInput = document.getElementById("tgChatIdInput");
+                    const enabledCb = document.getElementById("tgEnabledCheckbox");
+                    if (tokenInput) tokenInput.value = j.data.bot_token || "";
+                    if (chatInput) chatInput.value = j.data.chat_id || "";
+                    if (enabledCb) enabledCb.checked = (j.data.enabled !== false);
+                }
+            } catch (e) {
+                console.error("Lỗi loadTelegramConfig:", e);
+            }
+        }
+
+        async function saveTelegramConfig() {
+            const token = document.getElementById("tgBotTokenInput")?.value?.trim() || "";
+            const chatId = document.getElementById("tgChatIdInput")?.value?.trim() || "";
+            const enabled = document.getElementById("tgEnabledCheckbox")?.checked ?? true;
+            
+            try {
+                const res = await fetch("/api/telegram/config", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ bot_token: token, chat_id: chatId, enabled: enabled })
+                });
+                const j = await res.json();
+                if (j.status === "success") {
+                    alert("💾 Đã lưu cấu hình Bot Telegram thành công!\nHệ thống sẵn sàng kích hoạt lịch giám sát tự động.");
+                } else {
+                    alert(`Lỗi: ${j.message}`);
+                }
+            } catch (e) {
+                alert(`Lỗi kết nối: ${e.message}`);
+            }
+        }
+
+        async function testTelegramAlert() {
+            try {
+                const res = await fetch("/api/telegram/test", { method: "POST" });
+                const j = await res.json();
+                alert(j.message);
+            } catch (e) {
+                alert(`Lỗi gửi tin: ${e.message}`);
+            }
+        }
+
+        window.toggleTelegramConfigPanel = toggleTelegramConfigPanel;
+        window.loadTelegramConfigIntoUI = loadTelegramConfigIntoUI;
+        window.saveTelegramConfig = saveTelegramConfig;
+        window.testTelegramAlert = testTelegramAlert;
+    </script>
+    <script src="/static/app.js?v=3.5"></script>
+</body>
+</html>

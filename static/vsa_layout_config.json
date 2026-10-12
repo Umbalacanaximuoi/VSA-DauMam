@@ -1,0 +1,111 @@
+{
+    "layoutState": [
+        {
+            "id": "search-widget",
+            "x": 0,
+            "y": 0,
+            "w": 900,
+            "h": 160,
+            "visible": true,
+            "title": "Đánh Giá Cổ Phiếu"
+        },
+        {
+            "id": "summary-widget",
+            "x": 0,
+            "y": 180,
+            "w": 900,
+            "h": 90,
+            "visible": true
+        },
+        {
+            "id": "gauge-widget",
+            "x": 0,
+            "y": 290,
+            "w": 447,
+            "h": 674,
+            "visible": true,
+            "gaugeStyle": "image",
+            "title": "Đồng Hồ Sức Mạnh (VSA Gauge)"
+        },
+        {
+            "id": "recommendation-widget",
+            "x": 465,
+            "y": 293,
+            "w": 430,
+            "h": 135,
+            "visible": true,
+            "title": "Khuyến Nghị Hệ Thống"
+        },
+        {
+            "id": "core-criteria-widget",
+            "x": 10,
+            "y": 981,
+            "w": 440,
+            "h": 457,
+            "visible": true,
+            "title": "Bộ Tiêu Chí Chính"
+        },
+        {
+            "id": "aux-criteria-widget",
+            "x": 463,
+            "y": 983,
+            "w": 440,
+            "h": 872,
+            "visible": true,
+            "title": "Bộ Tiêu Chí Phụ"
+        }
+    ],
+    "criteriaConfig": {
+        "core": {
+            "ma": {
+                "active": true,
+                "period": 50
+            },
+            "maOrder": {
+                "active": true,
+                "p1": 10,
+                "p2": 20,
+                "p3": 50
+            },
+            "macd0": {
+                "active": true
+            },
+            "rsi50": {
+                "active": true,
+                "threshold": 50
+            }
+        },
+        "aux": {
+            "spread": {
+                "active": true,
+                "period": 20
+            },
+            "rsiSmooth": {
+                "active": true,
+                "period": 9
+            },
+            "macdSig": {
+                "active": true
+            },
+            "ma20Slope": {
+                "active": true
+            },
+            "ma50Slope": {
+                "active": true
+            },
+            "maConvergence": {
+                "active": true,
+                "threshold": 2
+            },
+            "volExhaust": {
+                "active": true,
+                "period": 10
+            }
+        }
+    },
+    "customTexts": {
+        "tagline": "Hệ thống nhận diện &amp; chấm điểm cổ phiếu thông minh",
+        "search_instructions": "Nhập mã cổ phiếu (ví dụ: FPT, HPG, TCB...) để chấm điểm theo bộ tiêu chí kép.",
+        "footer_text": "<i class=\"fa-solid fa-circle-info\"></i> Hệ thống tự động ưu tiên quét dữ liệu từ thư mục local `data/` (Amibroker/Fireant CSV) và tự động đồng bộ từ vnstock API nếu không có file cục bộ."
+    }
+}

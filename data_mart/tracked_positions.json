@@ -1,0 +1,54 @@
+[
+  {
+    "id": "IDC_20261007_1791363325",
+    "symbol": "IDC",
+    "buy_date": "2026-10-07",
+    "buy_price": 34.5,
+    "shares_count": 5000,
+    "buy_low": 33.7,
+    "point_name": "Điểm Nổ Breakout (B1)",
+    "initial_bdi": 70,
+    "created_at": "2026-10-07 15:55:25",
+    "status": "HOLDING",
+    "notes": "BDI Score: 70"
+  },
+  {
+    "id": "IDC_20261005_1791182641",
+    "symbol": "IDC",
+    "buy_date": "2026-10-05",
+    "buy_price": 33.4,
+    "shares_count": 3000,
+    "buy_low": 33.1,
+    "point_name": "Tích Lũy Nền (Chưa có điểm mua)",
+    "initial_bdi": 65,
+    "created_at": "2026-10-05 13:44:01",
+    "status": "HOLDING",
+    "notes": "BDI Score: 65"
+  },
+  {
+    "id": "NVB_20261002_1791014750",
+    "symbol": "NVB",
+    "buy_date": "2026-10-02",
+    "buy_price": 13.7,
+    "shares_count": 31000,
+    "buy_low": 13.5,
+    "point_name": "Điểm Nổ Breakout (B1)",
+    "initial_bdi": 85,
+    "created_at": "2026-10-03 15:05:50",
+    "status": "HOLDING",
+    "notes": "BDI Score: 85"
+  },
+  {
+    "id": "HAG_20261002_1790930891",
+    "symbol": "HAG",
+    "buy_date": "2026-10-02",
+    "buy_price": 14.8,
+    "shares_count": 10000,
+    "buy_low": 14.55,
+    "point_name": "Tích Lũy Nền (Chưa có điểm mua)",
+    "initial_bdi": 75,
+    "created_at": "2026-10-02 15:48:11",
+    "status": "HOLDING",
+    "notes": "BDI Score: 75"
+  }
+]

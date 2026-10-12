@@ -1,0 +1,16 @@
+{
+  "total_rows": 1415057,
+  "total_symbols": 428,
+  "t1_candidates": 326761,
+  "t1_success": 73081,
+  "t1_fail": 110926,
+  "t2_candidates": 58089,
+  "t2_success": 19999,
+  "t2_fail": 38090,
+  "t3_candidates": 38292,
+  "t3_success": 22049,
+  "t3_fail": 16236,
+  "t1_winrate_pct": 39.72,
+  "t2_winrate_pct": 34.43,
+  "t3_winrate_pct": 57.59
+}

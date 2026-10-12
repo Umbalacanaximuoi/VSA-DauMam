@@ -1,0 +1,69 @@
+[
+  {
+    "id": "WATCH_SBG_1791706076",
+    "symbol": "SBG",
+    "added_date": "2026-10-11",
+    "added_price": 14.3,
+    "initial_bdi": 60,
+    "initial_point": "Điểm Đẩy Nền Pivot (P1)",
+    "notes": "Lưu theo dõi Bot",
+    "status": "WATCHING",
+    "created_at": "2026-10-11 15:07:56"
+  },
+  {
+    "id": "WATCH_VOS_1791692520",
+    "symbol": "VOS",
+    "added_date": "2026-10-11",
+    "added_price": 12.1,
+    "initial_bdi": 80,
+    "initial_point": "Tích Lũy Nền (Chưa có điểm mua)",
+    "notes": "Lưu theo dõi Bot",
+    "status": "WATCHING",
+    "created_at": "2026-10-11 11:22:00"
+  },
+  {
+    "id": "WATCH_TCH_1791691003",
+    "symbol": "TCH",
+    "added_date": "2026-10-11",
+    "added_price": 10.75,
+    "initial_bdi": 65,
+    "initial_point": "Tích Lũy Nền (Chưa có điểm mua)",
+    "notes": "Lưu theo dõi Bot",
+    "status": "WATCHING",
+    "created_at": "2026-10-11 10:56:43"
+  },
+  {
+    "id": "WATCH_NT2_1791182586",
+    "symbol": "NT2",
+    "added_date": "2026-10-05",
+    "added_price": 22.25,
+    "initial_bdi": 75,
+    "initial_point": "Tích Lũy Nền (Chưa có điểm mua)",
+    "notes": "Lưu theo dõi Bot",
+    "status": "WATCHING",
+    "created_at": "2026-10-05 13:43:06"
+  },
+  {
+    "id": "WATCH_GVR_1791181192",
+    "symbol": "GVR",
+    "added_date": "2026-10-05",
+    "added_price": 32.45,
+    "initial_bdi": 50,
+    "initial_point": "Tích Lũy Nền (Chưa có điểm mua)",
+    "notes": "Lưu theo dõi radar",
+    "status": "WATCHING",
+    "created_at": "2026-10-05 13:19:52"
+  },
+  {
+    "id": "WATCH_TNG_1791518931",
+    "symbol": "TNG",
+    "added_date": "2026-10-09",
+    "added_price": 18.8,
+    "initial_bdi": 70,
+    "initial_point": "Tích Lũy Nền (BDI 70 - BMS 71.6)",
+    "target_signals": "Kiệt Cung VDU & Giải Phóng Năng Lượng BMS >= 80",
+    "notes": "Theo dõi nhịp rũ bỏ kiệt cung và phiên giải phóng năng lượng đón sóng lớn",
+    "status": "WATCHING",
+    "created_at": "2026-10-09 09:28:42"
+  }
+]

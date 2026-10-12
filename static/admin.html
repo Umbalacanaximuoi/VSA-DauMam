@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUẢN TRỊ VIÊN BẢN QUYỀN — VSA ĐẬU MẦM PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="admin-body">
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="adminLoginModal" class="admin-login-screen">
+        <div class="admin-login-card">
+            <div class="logo-circle" style="margin: 0 auto 16px;">🌱</div>
+            <h2>ĐĂNG NHẬP QUẢN TRỊ VIÊN</h2>
+            <p class="admin-subtitle">Trung Tâm Quản Lý Bản Quyền VSA Đậu Mầm Pro</p>
+            
+            <div class="admin-input-group">
+                <label>MẬT KHẨU QUẢN TRỊ (ADMIN PASSWORD):</label>
+                <input type="password" id="adminPasswordInput" placeholder="Nhập mật khẩu quản trị..." onkeydown="if(event.key==='Enter') submitAdminLogin()">
+            </div>
+            
+            <button class="btn-primary" style="width: 100%; padding: 12px; font-size: 14px; margin-top: 10px;" onclick="submitAdminLogin()">🔓 ĐĂNG NHẬP DASHBOARD</button>
+            <div id="loginErrorMsg" class="admin-error-text hidden"></div>
+            
+            <div style="margin-top: 20px; font-size: 12px; color: #8A9BA8; text-align: center;">
+                Mật khẩu mặc định khởi tạo: <code>daumam2026@admin</code>
+            </div>
+            
+            <div style="margin-top: 14px; text-align: center;">
+                <a href="/" style="font-size: 13px; color: #10B981; text-decoration: none; font-weight: 700;">⬅️ Quay lại Ứng Dụng</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN MAIN DASHBOARD -->
+    <div id="adminMainDashboard" class="admin-dashboard-wrapper hidden">
+        <header class="navbar admin-navbar">
+            <div class="nav-brand">
+                <div class="logo-circle">👑</div>
+                <div>
+                    <div class="brand-title">TRANG QUẢN TRỊ BẢN QUYỀN ĐÁM MÂY</div>
+                    <div class="brand-subtitle">VSA Đậu Mầm Pro — Central License Registry</div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <a href="javascript:void(0)" onclick="openAppAsAdmin()" class="tag-btn" style="text-decoration:none; padding: 6px 14px; background:#10B981; color:white; border-color:#10B981; font-weight:700;">🖥️ Vào Ứng Dụng Ngay</a>
+                <button class="btn-danger-sm" onclick="adminLogout()">Đăng Xuất</button>
+            </div>
+        </header>
+
+        <main class="container admin-container">
+            <!-- STATS CARDS -->
+            <div class="admin-stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">👥</span>
+                    <div>
+                        <div class="stat-val" id="statTotal">0</div>
+                        <div class="stat-label">Tổng Khách Hàng</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🟢</span>
+                    <div>
+                        <div class="stat-val text-green" id="statActive">0</div>
+                        <div class="stat-label">Đang Hoạt Động (Active)</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🟡</span>
+                    <div>
+                        <div class="stat-val text-gold" id="statExpiring">0</div>
+                        <div class="stat-label">Sắp Hết Hạn (&le; 7 ngày)</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🔴</span>
+                    <div>
+                        <div class="stat-val text-red" id="statExpired">0</div>
+                        <div class="stat-label">Hết Hạn / Bị Khóa</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROLS TOOLBAR -->
+            <div class="admin-toolbar">
+                <div class="toolbar-left">
+                    <button class="btn-primary" onclick="openCreateModal()">➕ Tạo License Key Mới</button>
+                    <button class="btn-warning-action" onclick="openWarningModal()">🔔 Cảnh Báo Sắp Hết Hạn</button>
+                    <button class="btn-refresh" onclick="loadLicenses()">🔄 Làm Mới</button>
+                </div>
+                <div class="toolbar-right">
+                    <input type="text" id="adminSearchInput" class="admin-search" placeholder="🔍 Tìm tên, key, HWID..." oninput="filterLicensesTable()">
+                    <select id="adminFilterStatus" class="admin-filter-select" onchange="filterLicensesTable()">
+                        <option value="ALL">Tất cả trạng thái</option>
+                        <option value="ACTIVE">🟢 Đang hoạt động</option>
+                        <option value="EXPIRING">🟡 Sắp hết hạn (&le; 7 ngày)</option>
+                        <option value="EXPIRED">🔴 Đã hết hạn</option>
+                        <option value="REVOKED">⛔ Bị khóa (Revoked)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- LICENSES TABLE -->
+            <div class="admin-table-card">
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Khách Hàng</th>
+                                <th>Gói Cước</th>
+                                <th>License Key</th>
+                                <th>Mã Máy (HWID)</th>
+                                <th>Ngày Cấp</th>
+                                <th>Ngày Hết Hạn</th>
+                                <th>Còn Lại</th>
+                                <th>Trạng Thái</th>
+                                <th>Thao Tác Quản Trị</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licensesTableBody">
+                            <tr><td colspan="10" style="text-align:center; padding:30px;">Đang tải danh sách...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL 1: CREATE LICENSE KEY -->
+    <div id="createLicenseModal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>➕ TẠO LICENSE KEY MỚI</h3>
+                <button class="close-btn" onclick="closeCreateModal()">✕</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="admin-form-group">
+                    <label>Tên khách hàng / Đại lý:</label>
+                    <input type="text" id="newClientName" placeholder="VD: Anh Nam VIP">
+                </div>
+
+                <div class="admin-form-group">
+                    <label>Thời hạn sử dụng:</label>
+                    <select id="newDaysSelect" class="gatekeeper-select" onchange="toggleCustomDays(this.value)">
+                        <option value="30">1 Tháng (30 ngày)</option>
+                        <option value="90">3 Tháng (90 ngày)</option>
+                        <option value="180">6 Tháng (180 ngày)</option>
+                        <option value="365">1 Năm (365 ngày)</option>
+                        <option value="18262">VIP Vĩnh Viễn (50 năm)</option>
+                        <option value="custom">Tùy chỉnh số ngày...</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group hidden" id="customDaysGroup">
+                    <label>Số ngày tùy chỉnh:</label>
+                    <input type="number" id="newCustomDays" placeholder="VD: 45">
+                </div>
+
+                <div class="admin-form-group">
+                    <label>Gắn Mã Máy Cố Định (Hardware ID):</label>
+                    <input type="text" id="newBoundHwid" placeholder="VD: DM-D849-7C74-0108-08AE (hoặc để ANY)">
+                    <span class="field-hint">Để 'ANY' nếu muốn tự động khóa theo máy đầu tiên kích hoạt key.</span>
+                </div>
+
+                <div class="admin-form-group">
+                    <label>Tên gói hiển thị:</label>
+                    <input type="text" id="newPlanName" value="VIP" placeholder="VD: VIP PRO">
+                </div>
+
+                <div class="admin-form-group">
+                    <label>Ghi chú khách hàng:</label>
+                    <input type="text" id="newNotes" placeholder="VD: Khách chuyển khoản VCB ngày 20/09">
+                </div>
+
+                <button class="btn-activate" style="margin-top:14px;" onclick="submitCreateLicense()">🚀 TẠO VÀ LƯU KEY MỚI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: RENEWAL MODAL -->
+    <div id="renewModal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>⚡ GIA HẠN THỜI HẠN BẢN QUYỀN</h3>
+                <button class="close-btn" onclick="closeRenewModal()">✕</button>
+            </div>
+            
+            <div class="modal-body">
+                <p style="font-size:14px; margin-bottom:12px;">Khách hàng: <strong id="renewClientText" class="text-green">--</strong></p>
+                <div class="admin-form-group">
+                    <label>Chọn thời gian gia hạn thêm:</label>
+                    <select id="renewDaysSelect" class="gatekeeper-select">
+                        <option value="30">+30 Ngày (1 Tháng)</option>
+                        <option value="90">+90 Ngày (3 Tháng)</option>
+                        <option value="180">+180 Ngày (6 Tháng)</option>
+                        <option value="365">+365 Ngày (1 Năm)</option>
+                        <option value="18262">Nâng cấp VIP Vĩnh Viễn</option>
+                    </select>
+                </div>
+
+                <input type="hidden" id="renewTargetKey">
+                <button class="btn-activate" style="margin-top:14px;" onclick="submitRenewLicense()">⚡ XÁC NHẬN GIA HẠN NGAY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: EXPIRING WARNINGS POPUP -->
+    <div id="warningModal" class="modal-backdrop hidden">
+        <div class="modal-card modal-wide">
+            <div class="modal-header">
+                <h3>🔔 DANH SÁCH KHÁCH HÀNG SẮP HẾT HẠN (&le; 7 NGÀY)</h3>
+                <button class="close-btn" onclick="closeWarningModal()">✕</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="warningListContainer">
+                    <p>Đang kiểm tra...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/admin.js"></script>
+</body>
+</html>

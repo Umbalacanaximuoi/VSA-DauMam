@@ -1,0 +1,46 @@
+# ========================================================
+# .gitignore — VSA ĐẬU MẦM PRO (MOBILE & DESKTOP)
+# ========================================================
+
+# 1. Các file dữ liệu lớn vượt quá 100MB (GitHub chặn push)
+data_mart/*.parquet
+!data_mart/vnindex_regime_*.parquet
+!data_mart/sector_wave_matrix_*.parquet
+!data_mart/supplementary_symbols.parquet
+*.parquet
+*.zip
+*.tar.gz
+
+# 2. File bảo mật & thông tin cá nhân (Private Tokens & Secrets)
+data_mart/telegram_config.json
+data_mart/rrbdi_alerted_cache.json
+*.env
+api_key.json
+.agents/api_key.json
+
+# 3. File Nhật ký (Logs) & Cache
+*.log
+data_mart/*.log
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# 4. Môi trường ảo (Virtual Environments)
+.venv/
+venv/
+ENV/
+env/
+
+# 5. File Build / PyInstaller Đóng Gói (Rất nặng hàng trăm MB)
+build/
+dist/
+*.spec
+*.exe
+
+# 6. Thư mục nháp tạm thời
+scratch/
+.system_generated/
+*.tmp

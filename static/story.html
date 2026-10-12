@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câu Chuyện Đậu Mầm Hôm Nay — Đối Thoại Bộ Ba Nhân Vật VSA</title>
+    <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+    <style>
+        body {
+            background-color: #080D14;
+            color: #FFFFFF;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        .card-dark {
+            background: #141E28;
+            border: 1px solid #243547;
+            border-radius: 18px;
+        }
+        .tag-pill {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B1118; }
+        ::-webkit-scrollbar-thumb { background: #1E2D3D; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10B981; }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+    <div class="max-w-4xl mx-auto space-y-6">
+
+        <!-- TOP HEADER: THÔNG TIN CỔ PHIẾU & ĐIỀU HƯỚNG -->
+        <header class="card-dark p-5 md:p-6 shadow-2xl flex flex-wrap justify-between items-center gap-4 border-emerald-500/30">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-3xl shadow-lg shadow-emerald-900/40">
+                    🌱
+                </div>
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span id="storySymbolBadge" class="text-2xl md:text-3xl font-black text-emerald-400 tracking-wider font-mono">
+                            TCB
+                        </span>
+                        <span id="storyPhaseBadge" class="tag-pill bg-purple-500/25 text-purple-200 border border-purple-500/40 text-sm font-bold">
+                            Pha Tích Lũy / Rũ Bỏ
+                        </span>
+                    </div>
+                    <h1 class="text-base md:text-lg font-bold text-white mt-1">
+                        CÂU CHUYỆN ĐẬU MẦM HÔM NAY (ĐỐI THOẠI BỘ BA NHÂN VẬT)
+                    </h1>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <span class="text-sm font-bold text-white block">Điểm Sức Mạnh:</span>
+                    <span id="storyScoreVal" class="text-2xl font-black text-emerald-400 font-mono">82.5 <span class="text-sm text-slate-300">/ 100</span></span>
+                </div>
+                <button onclick="window.close()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 transition flex items-center gap-1.5 shadow">
+                    <span>✕</span> <span>Đóng Tab</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- BANNER GIỚI THIỆU PHẢN BIỆN 3 CHIỀU -->
+        <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-4 rounded-xl border border-slate-700/80 text-white text-sm md:text-base leading-relaxed shadow flex items-center gap-3">
+            <span class="text-2xl">💡</span>
+            <p>
+                <strong>Góc nhìn phản biện đa chiều:</strong> Cuộc đối thoại bóc tách tâm lý giữa <strong>Cảm Xúc FOMO Bảng Điện</strong> vs <strong>Lý Tính Chu Kỳ VSA</strong> vs <strong>Kỷ Luật Quản Trị Vốn Zero-Loss</strong> giúp bạn tỉnh táo trước mọi cạm bẫy thị trường.
+            </p>
+        </div>
+
+        <!-- KHỐI 3 NHÂN VẬT (CHỮ LỚN, ĐEN NỀN TRẮNG CHỮ TƯƠNG PHẢN CAO RẤT DỄ ĐỌC) -->
+        <div class="space-y-5">
+
+            <!-- 1. SÂU FOMO (TÂM LÝ CẢM XÚC - HƯNG PHẤN / SỢ HÃI) -->
+            <div class="card-dark p-6 border-rose-500/40 shadow-xl space-y-3 bg-gradient-to-b from-rose-950/20 to-slate-900">
+                <div class="flex items-center justify-between border-b border-rose-900/50 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-rose-900/80 border border-rose-500/60 flex items-center justify-center text-2xl shadow-md">
+                            🐛
+                        </div>
+                        <div>
+                            <h2 class="text-lg md:text-xl font-extrabold text-rose-300">
+                                Sâu FOMO (Tâm Lý Cảm Xúc Thị Trường)
+                            </h2>
+                            <span class="text-xs text-rose-200 block font-semibold">Đại diện cho tâm lý hưng phấn, sợ lỡ sóng, hoặc hoang mang khi rung lắc</span>
+                        </div>
+                    </div>
+                    <span class="tag-pill bg-rose-500/25 text-rose-200 border border-rose-500/50 text-xs font-bold uppercase tracking-wider">
+                        HƯNG PHẤN / SỢ HÃI
+                    </span>
+                </div>
+
+                <div id="storySauFomo" class="text-base md:text-lg text-white font-medium leading-relaxed pt-1 space-y-2">
+                    <p class="italic text-slate-300">Đang lắng nghe nhịp thở bảng điện...</p>
+                </div>
+            </div>
+
+            <!-- 2. HUỆ QUYÊN (NHÀ ĐỒNG HÀNH THÔNG THÁI - LÝ TÍNH & CHU KỲ VSA) -->
+            <div class="card-dark p-6 border-indigo-500/40 shadow-xl space-y-3 bg-gradient-to-b from-indigo-950/20 to-slate-900">
+                <div class="flex items-center justify-between border-b border-indigo-900/50 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-900/80 border border-indigo-500/60 flex items-center justify-center text-2xl shadow-md">
+                            👩‍💼
+                        </div>
+                        <div>
+                            <h2 class="text-lg md:text-xl font-extrabold text-indigo-300">
+                                Huệ Quyên (Nhà Đồng Hành Thông Thái)
+                            </h2>
+                            <span class="text-xs text-indigo-200 block font-semibold">Bóc tách cấu trúc giá, phân tích bản chất cung cầu &amp; chu kỳ tích lũy</span>
+                        </div>
+                    </div>
+                    <span class="tag-pill bg-indigo-500/25 text-indigo-200 border border-indigo-500/50 text-xs font-bold uppercase tracking-wider">
+                        LÝ TÍNH &amp; CHU KỲ
+                    </span>
+                </div>
+
+                <div id="storyHueQuyen" class="text-base md:text-lg text-white font-medium leading-relaxed pt-1 space-y-2">
+                    <p class="italic text-slate-300">Đang phân tích cấu trúc chu kỳ VSA...</p>
+                </div>
+            </div>
+
+            <!-- 3. BÉ ĐẬU (QUẢN TRỊ VỐN TÍ HON - KỶ LUẬT ZERO-LOSS) -->
+            <div class="card-dark p-6 border-emerald-500/40 shadow-xl space-y-3 bg-gradient-to-b from-emerald-950/20 to-slate-900">
+                <div class="flex items-center justify-between border-b border-emerald-900/50 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-900/80 border border-emerald-500/60 flex items-center justify-center text-2xl shadow-md">
+                            🌱
+                        </div>
+                        <div>
+                            <h2 class="text-lg md:text-xl font-extrabold text-emerald-300">
+                                Bé Đậu (Quản Trị Vốn Tí Hon)
+                            </h2>
+                            <span class="text-xs text-emerald-200 block font-semibold">Kỷ luật thép Zero-Loss, chia đợt giải ngân 4x2, bảo vệ tiền tuyệt đối</span>
+                        </div>
+                    </div>
+                    <span class="tag-pill bg-emerald-500/25 text-emerald-200 border border-emerald-500/50 text-xs font-bold uppercase tracking-wider">
+                        KỶ LUẬT ZERO-LOSS
+                    </span>
+                </div>
+
+                <div id="storyBeDau" class="text-base md:text-lg text-white font-medium leading-relaxed pt-1 space-y-2">
+                    <p class="italic text-slate-300">Đang tính toán hạn mức rủi ro và điểm cắt lỗ...</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER ĐIỀU HƯỚNG -->
+        <div class="p-4 bg-slate-900 rounded-xl border border-slate-800 flex flex-wrap justify-between items-center text-sm text-white gap-3">
+            <span>💡 <em>Lời khuyên: Hãy luôn đọc câu chuyện này trước khi đặt lệnh để kiểm soát tâm lý.</em></span>
+            <button onclick="window.close()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition shadow-lg shadow-emerald-900/40">
+                Quay Lại Bảng Phân Tích Tab 1
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        function formatMd(text) {
+            if (!text) return '';
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em class="text-slate-200">$1</em>')
+                .replace(/\n\n/g, '<br><br>')
+                .replace(/\n/g, '<br>');
+        }
+
+        async function loadStoryData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sym = (urlParams.get('symbol') || 'TCB').toUpperCase();
+            const dateVal = urlParams.get('date') || null;
+
+            document.getElementById('storySymbolBadge').innerText = sym;
+            document.title = `Câu Chuyện Đậu Mầm Hôm Nay — ${sym}`;
+
+            try {
+                const res = await fetch('/api/evaluate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({symbol: sym, target_date: dateVal})
+                });
+
+                if (res.ok) {
+                    const resJson = await res.json();
+                    if (resJson.status === 'success') {
+                        const data = resJson.data || {};
+                        const ai = resJson.ai_reasoning || {};
+
+                        // Điểm số & Pha
+                        const score = Number(data.score) || 0;
+                        document.getElementById('storyScoreVal').innerHTML = `${score.toFixed(1)} <span class="text-sm text-slate-300">/ 100</span>`;
+                        document.getElementById('storyPhaseBadge').innerText = data.phase_name || "Pha Tích Lũy / Rũ Bỏ";
+
+                        // Điền nội dung đối thoại 3 nhân vật
+                        document.getElementById('storySauFomo').innerHTML = formatMd(ai.sau_fomo || `Trời ơi ${sym} tiền to vào cuồn cuộn thế này không múc nhanh là lỡ sóng thế kỷ! Em tính tất tay full Margin phiên mai luôn cho máu!`);
+                        document.getElementById('storyHueQuyen').innerHTML = formatMd(ai.hue_quyen || `Bình tĩnh nào Sâu FOMO ơi! Đừng để cảm xúc che mờ lý trí. Hãy nhìn kỹ khối lượng và cấu trúc giá ${sym} hôm nay.`);
+                        document.getElementById('storyBeDau').innerHTML = formatMd(ai.be_dau || `Em cấm Sâu FOMO dùng Margin vùng này nhé! Tiền của chúng ta phải giữ như giữ vàng. Mua cược 1/8 tiền mặt, gãy nền là cắt lỗ -2.5% dứt khoát!`);
+                    }
+                }
+            } catch (e) {
+                console.error('Lỗi tải câu chuyện Đậu Mầm:', e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadStoryData);
+    </script>
+</body>
+</html>

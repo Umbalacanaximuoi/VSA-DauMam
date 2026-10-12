@@ -1,0 +1,31 @@
+{
+  "total_stocks": 428,
+  "total_candle_rows": 1415057,
+  "date_min": "2007-01-02",
+  "date_max": "2026-09-22",
+  "stock_file_size_mb": 102.83,
+  "vni_sessions": 4911,
+  "sector_matrix_rows": 39299,
+  "sectors_covered": [
+    "BAN_LE",
+    "THEP",
+    "CHUNG_KHOAN",
+    "HOA_CHAT",
+    "NGAN_HANG",
+    "BAT_DONG_SAN",
+    "DAU_KHI",
+    "CANG_BIEN"
+  ],
+  "sample_stocks": [
+    "CRV",
+    "BID",
+    "HSL",
+    "FTS",
+    "FUESSVFL",
+    "SGN",
+    "LAF",
+    "SKG",
+    "VSH",
+    "DMX"
+  ]
+}
