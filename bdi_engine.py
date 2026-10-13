@@ -181,6 +181,131 @@ def check_new_base_after_breakout(df: pd.DataFrame, idx: int = None) -> tuple[bo
     else:
         return False, f"Chưa đủ điều kiện cạn kiệt vol tại nền 1 (min_vol: {min_v_ratio1:.2f}x, curr_vol: {curr_vr:.2f}x)", {"base_type": "BASE1_NOT_MET"}
 
+def check_sbar_breakout(df: pd.DataFrame, idx: int = None) -> tuple[bool, str, dict]:
+    """
+    Xác định phiên Breakout chuẩn đại diện bằng Sbar, LSbar hoặc Combo Sbar.
+    Điều kiện VSA cốt lõi (theo 'TTCKVN - Cuộc chơi của các tay chơi thực thụ'):
+    1. Có nền giá tích lũy (Nền 1 hoặc Nền 2 >= 5 phiên).
+    2. Có nhịp rũ bỏ (Shakeout) và kiệt cung (Volume Dry-Up <= 0.88x TB10).
+    3. Thanh bùng nổ là Sbar hoặc Combo Sbar:
+       - Sbar đơn lẻ:
+         + Biên độ (High - Low) >= 1.20 * avg_range20 (vượt bình quân 20% - 50%)
+         + Đóng cửa ở nửa trên (> 50% thân nến)
+         + Volume >= 1.25x TB10
+         + Tăng giá >= 2.0%
+       - Combo Sbar (gộp 2 nến liên tiếp):
+         + Biên độ gộp (max(H1, H2) - min(L1, L2)) >= 1.30 * avg_range20
+         + Đóng cửa C2 ở nửa trên (> 50% biên độ gộp)
+         + Khối lượng bùng nổ ở một trong 2 nến >= 1.20x TB10
+         + Mức tăng lũy kế 2 phiên >= 2.5%
+    """
+    if df is None or len(df) < 25:
+        return False, "Không đủ dữ liệu", {}
+        
+    curr_idx = (len(df) - 1) if idx is None else idx
+    row = df.iloc[curr_idx]
+    prev = df.iloc[curr_idx - 1] if curr_idx > 0 else row
+    prev2 = df.iloc[curr_idx - 2] if curr_idx > 1 else prev
+    
+    close = float(row['close'])
+    prev_close = float(prev['close'])
+    prev2_close = float(prev2['close'])
+    high = float(row['high'])
+    low = float(row['low'])
+    vol = float(row['volume'])
+    avg_v10 = float(row['avg_vol10']) if 'avg_vol10' in row else vol
+    
+    # Tính avg_range20
+    candle_len = high - low
+    ranges = (df['high'] - df['low']).values
+    avg_range20 = np.mean(ranges[max(0, curr_idx - 20):curr_idx]) if curr_idx >= 5 else candle_len
+    
+    # 1. Kiểm tra Sbar đơn lẻ
+    spread_ratio = candle_len / (avg_range20 + 1e-9)
+    close_pos = (close - low) / (candle_len + 1e-9) if candle_len > 0 else 0.5
+    chg_pct = (close - prev_close) / (prev_close + 1e-9) * 100.0
+    vol_r10 = vol / (avg_v10 + 1e-9)
+    
+    is_single_sbar = (spread_ratio >= 1.20) and (close_pos >= 0.55) and (vol_r10 >= 1.25) and (chg_pct >= 2.0)
+    
+    # 2. Kiểm tra Combo Sbar (gộp 2 nến)
+    combo_high = max(high, float(prev['high']))
+    combo_low = min(low, float(prev['low']))
+    combo_len = combo_high - combo_low
+    combo_spread_ratio = combo_len / (avg_range20 + 1e-9)
+    combo_close_pos = (close - combo_low) / (combo_len + 1e-9) if combo_len > 0 else 0.5
+    combo_chg = (close - prev2_close) / (prev2_close + 1e-9) * 100.0
+    combo_vol_ok = (vol_r10 >= 1.20) or (float(prev['volume']) / (float(prev.get('avg_vol10', vol)) + 1e-9) >= 1.20)
+    
+    is_combo_sbar = (combo_spread_ratio >= 1.30) and (combo_close_pos >= 0.55) and combo_vol_ok and (combo_chg >= 2.5) and (chg_pct > 0)
+    
+    # 3. Kiểm tra nền giá hỗ trợ phía trước (có nền >= 5 phiên, rũ bỏ & kiệt cung)
+    lookback_base = df.iloc[max(0, curr_idx - 20):curr_idx]
+    has_base = len(lookback_base) >= 5
+    min_v_ratio = np.min(lookback_base['volume'] / (lookback_base['avg_vol10'] + 1e-9)) if has_base else 1.0
+    has_vdu = (min_v_ratio <= 0.88)
+    
+    if (is_single_sbar or is_combo_sbar) and has_base and has_vdu:
+        sbar_type = "Sbar Đơn Lẻ" if is_single_sbar else "Combo Sbar 2 Phiên"
+        spread_val = spread_ratio if is_single_sbar else combo_spread_ratio
+        reason = f"Breakout xác nhận bằng {sbar_type} (Biên độ {spread_val:.2f}x TB20, Vol nổ, nền trước kiệt cung {min_v_ratio:.2f}x)"
+        return True, sbar_type, {"reason": reason, "is_single": is_single_sbar, "is_combo": is_combo_sbar, "spread_ratio": spread_val}
+        
+    return False, "Chưa thỏa mãn Sbar/Combo Sbar Breakout", {}
+
+def check_rbar_exit_warning(df: pd.DataFrame, buy_date: str = None, buy_price: float = None) -> tuple[bool, str, dict]:
+    """
+    Xác định thanh Reversal Bar (Rbar) đảo chiều thoát hàng / cắt lỗ.
+    Theo quy chuẩn VSA: Rbar đóng cửa THỦNG dưới True Range của thanh LSbar tăng trước đó.
+    True Range của LSbar = [min(Low, prev_Close), max(High, prev_Close)]
+    => Khi Rbar xuất hiện: Bẻ gãy hoàn toàn xu hướng Swing Up => KÍCH HOẠT CẮT LỖ / THOÁT HÀNG.
+    """
+    if df is None or len(df) < 10:
+        return False, "Không đủ dữ liệu", {}
+        
+    curr_idx = len(df) - 1
+    curr_row = df.iloc[curr_idx]
+    curr_close = float(curr_row['close'])
+    
+    # Tìm thanh LSbar tăng giá gần nhất (trong vòng 25 phiên trở lại)
+    last_lsbar_idx = None
+    ranges = (df['high'] - df['low']).values
+    avg_range20 = np.mean(ranges[-20:]) if len(ranges) >= 20 else 1.0
+    
+    for lb in range(curr_idx - 1, max(0, curr_idx - 25), -1):
+        b_row = df.iloc[lb]
+        b_prev = df.iloc[lb - 1] if lb > 0 else b_row
+        b_close = float(b_row['close'])
+        b_prev_close = float(b_prev['close'])
+        b_len = float(b_row['high']) - float(b_row['low'])
+        b_pos = (b_close - float(b_row['low'])) / (b_len + 1e-9) if b_len > 0 else 0.5
+        b_chg = (b_close - b_prev_close) / (b_prev_close + 1e-9) * 100.0
+        b_vr = float(b_row['volume']) / (float(b_row['avg_vol10']) + 1e-9)
+        
+        # Tiêu chuẩn Sbar tăng
+        if (b_len >= 1.15 * avg_range20) and (b_pos >= 0.50) and (b_chg >= 1.8) and (b_vr >= 1.15):
+            last_lsbar_idx = lb
+            break
+            
+    if last_lsbar_idx is not None:
+        lsbar_row = df.iloc[last_lsbar_idx]
+        prev_lsbar = df.iloc[last_lsbar_idx - 1] if last_lsbar_idx > 0 else lsbar_row
+        
+        # True Range của LSbar (tính cả gap)
+        true_low = min(float(lsbar_row['low']), float(prev_lsbar['close']))
+        true_high = max(float(lsbar_row['high']), float(prev_lsbar['close']))
+        lsbar_date = str(lsbar_row['time'])[:10]
+        
+        # Rbar đảo chiều: Giá đóng cửa hiện tại thấp hơn True Range Low của LSbar
+        if curr_close < true_low:
+            reason = (
+                f"🚨 CẢNH BÁO RBAR ĐẢO CHIỀU: Giá đóng cửa ({curr_close:.2f}) thủng dưới True Range đáy ({true_low:.2f}) "
+                f"của thanh LSbar tăng ngày {lsbar_date}! Đảo chiều Swing Up -> KÍCH HOẠT THOÁT HÀNG / BÁN CẮT LỖ TOÀN BỘ!"
+            )
+            return True, reason, {"lsbar_date": lsbar_date, "true_low": true_low, "true_high": true_high}
+            
+    return False, "Chưa xuất hiện Rbar đảo chiều", {}
+
 def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
     """
     Evaluates stock using the VSA Ông Bình Design Index (BDI) (0 - 100 points)
@@ -251,11 +376,14 @@ def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
     # Kiểm tra Thuật toán số 2: Xác thực Nền Mới Sau Nhịp Nổ
     is_base_valid, base_desc, base_meta = check_new_base_after_breakout(df, idx=len(df)-1)
     
+    # Breakout B1: Được đại diện bởi Sbar, LSbar hoặc Combo Sbar (khi có nền tích lũy, rũ bỏ & kiệt cung)
+    is_sbar_bo, sbar_name, sbar_meta = check_sbar_breakout(df, idx=len(df)-1)
+    
     # Đột biến thể tích sớm: Vol >= 2.5x TB10, TB10 >= 50,000 cp, tăng >= 1.5%, đóng nến >= 70% thân nến trên
     is_vol_surge = (vol >= 2.5 * avg_v10) and (avg_v10 >= 50000) and (chg_pct >= 1.5) and (close_pos >= 0.70)
     
-    # Breakout B1: Nổ vol vượt cản, tăng >= 2.3%, đóng cao (close_pos >= 0.70)
-    is_breakout = ((chg_pct >= 2.3) and (vol_r10 >= 1.3) and (close_pos >= 0.70) and (close >= ma20)) or is_vol_surge
+    # Breakout B1: Nổ vol vượt cản, tăng >= 2.3%, đóng cao (close_pos >= 0.70) HOẶC đạt chuẩn Sbar/Combo Sbar Breakout
+    is_breakout = is_sbar_bo or ((chg_pct >= 2.3) and (vol_r10 >= 1.3) and (close_pos >= 0.70) and (close >= ma20)) or is_vol_surge
     # Pivot P1 (Đẩy nền): Bám sát MA20, vol nhú 0.85 - 2.2x, nến xanh tăng nhẹ-khá
     is_pivot = (0.6 <= chg_pct <= 4.0) and (-2.0 <= dist_ma20 <= 3.8) and (vol_r10 >= 0.85) and (close_pos >= 0.55) and obv_up
     
@@ -264,6 +392,9 @@ def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
     
     if is_vol_surge:
         point_name = "Điểm Đột Biến Thể Tích Sớm (Volume Surge B1)"
+        point_code = "B1"
+    elif is_sbar_bo:
+        point_name = f"Điểm Nổ Breakout ({sbar_name})"
         point_code = "B1"
     elif is_breakout:
         point_name = "Điểm Nổ Breakout (B1)"
@@ -779,9 +910,16 @@ def evaluate_rrbdi_for_tracked_positions() -> list:
         
         broke_low = bool(cur_close < buy_low)
         
+        # Kiểm tra cảnh báo Rbar đảo chiều (Thủng True Range của LSbar tăng gần nhất)
+        is_rbar, rbar_alert_msg, rbar_meta = check_rbar_exit_warning(df, buy_date=buy_date, buy_price=buy_price)
+        
         # --- THỨ TỰ PHÂN CẤP CẢNH BÁO RRBDI ---
-        # CẤP 3: BÁO ĐỘNG ĐỎ (Thủng Low nến mua HOẶC gãy 3 phiên MA10/MA20)
-        if broke_low:
+        # CẤP 3: BÁO ĐỘNG ĐỎ (Xuất hiện Rbar đảo chiều HOẶC Thủng Low nến mua HOẶC gãy 3 phiên MA10/MA20)
+        if is_rbar:
+            rrbdi_level = "RED"
+            rrbdi_badge = "🚨 CẤP BÁO ĐỎ (Rbar Đảo Chiều)"
+            rrbdi_alert = rbar_alert_msg
+        elif broke_low:
             rrbdi_level = "RED"
             rrbdi_badge = "🚨 CẤP BÁO ĐỎ (Tối Hậu)"
             rrbdi_alert = f"Thủng giá thấp nhất cây nến mua ({cur_close:.2f} < {buy_low:.2f})! Xác suất thất bại 98-100%. BÁN DỪNG LỖ 100% NGAY LẬP TỨC!"
