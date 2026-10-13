@@ -155,8 +155,7 @@ def evaluate_stock_mobile(symbol: str, target_date_str: str = None) -> dict:
         rec_headline = "Lò xo bung chốt – Bạn nên có mặt!"
         rec_action = "Phát súng hiệu dòng tiền tổ chức nhập cuộc chớm nhú từ nền giá. Đạt điều kiện mở vị thế đón đầu hoặc gia tăng khi có đệm lãi."
         rec_color = "sky"
-        rec_step = "Tầng 2 / 4: Đón Đầu Chân Sóng"
-    elif is_cuoc or point_code == "C1" or (vsa_score >= 60 and bms_score >= 65 and vol_r10 <= 0.95):
+    elif is_cuoc or point_code == "C1":
         rec_type = "C"
         rec_label = "Cược C"
         rec_badge = "🎯 CƯỢC C — KIỆT CUNG NỀN SIẾT"
@@ -164,6 +163,14 @@ def evaluate_stock_mobile(symbol: str, target_date_str: str = None) -> dict:
         rec_action = "Vùng tích lũy cạn kiệt nguồn cung, rủi ro sụt giảm thấp nhất. Đạt tiêu chuẩn thử nghiệm vị thế thăm dò 1/8 tại điểm tựa giá vốn."
         rec_color = "amber"
         rec_step = "Tầng 1 / 4: Thăm Dò Nền Giá"
+    elif point_code == "AFTER_BO":
+        rec_type = "OBSERVE"
+        rec_label = "Chờ Nền 2"
+        rec_badge = "⏳ RETEST SAU NỔ — CHỜ SETUP NỀN MỚI"
+        rec_headline = "Vừa bùng nổ, đang hấp thụ lực chốt lời"
+        rec_action = "Cổ phiếu vừa có phiên nổ khối lượng lớn. Theo chuẩn VSA, cần chờ tối thiểu 1 tuần (>= 5 phiên) để hoàn tất cấu trúc Nền 2 (rũ bỏ & kiệt cung) trước khi mở vị thế mới."
+        rec_color = "purple"
+        rec_step = "Quan Sát Tạo Nền Mới"
     elif no2_data["is_no2"] and no2_data["action_code"] in ("C1", "P1"):
         # Ưu tiên kích hoạt theo Chiến Lược No2 khi cổ phiếu đang nén nền 2
         if no2_data["action_code"] == "P1":

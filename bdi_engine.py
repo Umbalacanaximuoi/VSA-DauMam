@@ -55,12 +55,131 @@ def _calc_macd_and_rsi(df: pd.DataFrame):
     df['obv'] = obv
     df['obv_wma10'] = obv.rolling(10).apply(lambda x: np.dot(x, weights) / w_sum, raw=True)
     
-    # Base 20 spread & MA convergence
     df['roll_max_20'] = df['high'].rolling(20).max()
     df['roll_min_20'] = df['low'].rolling(20).min()
     df['base_spread_20'] = (df['roll_max_20'] - df['roll_min_20']) / (df['roll_min_20'] + 1e-9) * 100
     df['ma_conv'] = abs(df['ma10'] - df['ma20']) / (df['ma20'] + 1e-9) * 100
     return df
+
+def check_new_base_after_breakout(df: pd.DataFrame, idx: int = None) -> tuple[bool, str, dict]:
+    """
+    Thuật toán số 2: Xác thực Nền Mới Sau Nhịp Nổ (New Base Setup Validation).
+    Yêu cầu VSA chuẩn hóa:
+    1. Nếu cổ phiếu đã có điểm mua cược, Pivot, và NỔ rồi thì:
+       - BẮT BUỘC phải được setup lại một nền mới.
+       - Nền mới này phải kéo dài TỐI THIỂU 1 tuần trở lên (>= 5 phiên giao dịch) kể từ nhịp nổ trước.
+       - Đầy đủ công thức chuẩn VSA: Rũ bỏ (Shakeout), Kiệt cung (VDU), và Chờ nổ (Nền số 2 trên cao).
+    2. Nếu vừa nổ xong (< 5 phiên): TUYỆT ĐỐI KHÔNG coi là Điểm Cược!
+    3. Nếu đang ở Nền 1 gốc: Phải tích lũy >= 5 phiên, có rũ bỏ và kiệt cung.
+    """
+    if df is None or len(df) < 20:
+        return False, "Không đủ dữ liệu nến", {}
+        
+    curr_idx = (len(df) - 1) if idx is None else idx
+    closes = df['close'].values
+    opens = df['open'].values
+    highs = df['high'].values
+    lows = df['low'].values
+    vols = df['volume'].values
+    avg_v10s = df['avg_vol10'].values if 'avg_vol10' in df.columns else vols
+    ma20s = df['ma20'].values if 'ma20' in df.columns else closes
+    ma50s = df['ma50'].values if 'ma50' in df.columns else closes
+    
+    # 1. Quét tìm phiên NỔ / BÙNG NỔ gần nhất trong 25 phiên qua
+    lookback = min(curr_idx, 25)
+    last_bo_idx = None
+    
+    for lb in range(curr_idx - 1, max(0, curr_idx - lookback - 1), -1):
+        prev_idx = max(0, lb - 1)
+        p_close = closes[prev_idx]
+        b_close = closes[lb]
+        b_chg = (b_close - p_close) / (p_close + 1e-9) * 100.0
+        b_vr = vols[lb] / (avg_v10s[lb] + 1e-9)
+        b_len = highs[lb] - lows[lb]
+        b_pos = (b_close - lows[lb]) / (b_len + 1e-9) if b_len > 0 else 0.5
+        
+        # Tiêu chí phiên nổ: tăng >= 2.0% kèm Vol >= 1.25x TB10, hoặc nổ vol lớn >= 1.5x TB10, hoặc tăng mạnh >= 3.0%
+        if (b_chg >= 2.0 and b_vr >= 1.25) or (b_vr >= 1.50 and b_chg >= 1.2) or (b_chg >= 3.0 and b_vr >= 1.10):
+            last_bo_idx = lb
+            break
+            
+    # 2. XỬ LÝ TRƯỜNG HỢP A: ĐÃ CÓ PHIÊN NỔ GẦN ĐÂY
+    if last_bo_idx is not None:
+        bars_since_bo = curr_idx - last_bo_idx
+        bo_date = str(df.iloc[last_bo_idx]['time'])[:10] if 'time' in df.columns else ""
+        bo_close = closes[last_bo_idx]
+        bo_open = opens[last_bo_idx]
+        bo_half = (bo_open + bo_close) / 2.0
+        
+        # Nếu chưa đủ 1 tuần (>= 5 phiên): TUYỆT ĐỐI LOẠI BỎ KHỎI ĐIỂM CƯỢC
+        if bars_since_bo < 5:
+            reason = f"Vừa có phiên Nổ ngày {bo_date} ({bars_since_bo} phiên trước). Chưa đủ 1 tuần (>= 5 phiên) để setup nền mới."
+            return False, reason, {"bars_since_bo": bars_since_bo, "base_type": "BREAKOUT_RECENT", "bo_date": bo_date}
+            
+        # Nếu đã đủ >= 5 phiên: Kiểm tra đầy đủ công thức Nền 2 Trên Cao (Rũ bỏ, Kiệt cung, Chờ nổ)
+        base2_slice_highs = highs[last_bo_idx : curr_idx + 1]
+        base2_slice_lows = lows[last_bo_idx : curr_idx + 1]
+        base2_slice_vols = vols[last_bo_idx + 1 : curr_idx + 1]
+        base2_slice_avg10 = avg_v10s[last_bo_idx + 1 : curr_idx + 1]
+        
+        base2_high = np.max(base2_slice_highs)
+        base2_low = np.min(base2_slice_lows)
+        depth_pct = ((base2_high - base2_low) / (base2_high + 1e-9)) * 100.0
+        
+        # (a) Giữ nền trên cao: Không gãy 50% thân nến nổ và không thủng MA50
+        curr_close = closes[curr_idx]
+        curr_ma20 = ma20s[curr_idx]
+        curr_ma50 = ma50s[curr_idx]
+        holds_above_support = (curr_close >= bo_half * 0.97) and (curr_close >= curr_ma50 * 0.96)
+        depth_ok = (depth_pct <= 17.5) # Nền 2 siết chặt, độ sâu điều chỉnh <= 17.5%
+        
+        # (b) Có nhịp Rũ bỏ (Shakeout / Pullback / Test):
+        # Có ít nhất 1 phiên giá nhúng xuống rũ cung (Low chạm hoặc nhúng dưới MA20, hoặc nến rút chân)
+        has_shakeout = False
+        for k in range(last_bo_idx + 1, curr_idx + 1):
+            if lows[k] <= ma20s[k] * 1.01 or (closes[k] < opens[k] and highs[k] - lows[k] > 0):
+                has_shakeout = True
+                break
+                
+        # (c) Có nhịp Kiệt Cung (Volume Dry-Up - VDU):
+        # Trong các phiên của Nền 2 (đặc biệt trong 5 phiên gần nhất), có phiên Vol <= 0.85x TB10
+        min_v_ratio = np.min(base2_slice_vols / (base2_slice_avg10 + 1e-9)) if len(base2_slice_vols) > 0 else 1.0
+        has_volume_dryup = (min_v_ratio <= 0.85)
+        
+        # (d) Phiên hiện tại đang nén chặt chờ nổ:
+        curr_vr = vols[curr_idx] / (avg_v10s[curr_idx] + 1e-9)
+        curr_near_ma = (abs(curr_close - curr_ma20) / (curr_ma20 + 1e-9) <= 0.04)
+        
+        if holds_above_support and depth_ok and has_shakeout and has_volume_dryup and curr_near_ma and (curr_vr <= 0.92):
+            reason = f"Đạt chuẩn Điểm Cược Nền 2 (Nền {bars_since_bo} phiên, có rũ bỏ & kiệt cung {min_v_ratio:.2f}x TB10, sâu {depth_pct:.1f}%)"
+            return True, reason, {"bars_since_bo": bars_since_bo, "base_type": "BASE2_CUOC", "depth_pct": depth_pct, "min_v_ratio": min_v_ratio}
+        else:
+            reasons_fail = []
+            if not holds_above_support: reasons_fail.append("Thủng hỗ trợ nến nổ/MA50")
+            if not depth_ok: reasons_fail.append(f"Độ sâu nền quá lớn ({depth_pct:.1f}%)")
+            if not has_shakeout: reasons_fail.append("Chưa có nhịp rũ bỏ test cung")
+            if not has_volume_dryup: reasons_fail.append(f"Vol chưa kiệt ({min_v_ratio:.2f}x)")
+            if curr_vr > 0.92: reasons_fail.append(f"Vol hiện tại còn cao ({curr_vr:.2f}x)")
+            reason = f"Đang xây Nền 2 ({bars_since_bo} phiên) nhưng chưa đạt: " + ", ".join(reasons_fail)
+            return False, reason, {"bars_since_bo": bars_since_bo, "base_type": "BASE2_BUILDING", "depth_pct": depth_pct}
+            
+    # 3. XỬ LÝ TRƯỜNG HỢP B: CHƯA NỔ GẦN ĐÂY (NỀN 1 BAN ĐẦU)
+    # Nền 1 phải tích lũy >= 5 phiên, có kiệt cung và nén chặt
+    base1_slice_vols = vols[max(0, curr_idx - 5) : curr_idx + 1]
+    base1_slice_avg10 = avg_v10s[max(0, curr_idx - 5) : curr_idx + 1]
+    min_v_ratio1 = np.min(base1_slice_vols / (base1_slice_avg10 + 1e-9)) if len(base1_slice_vols) > 0 else 1.0
+    
+    curr_close = closes[curr_idx]
+    curr_ma20 = ma20s[curr_idx]
+    curr_vr = vols[curr_idx] / (avg_v10s[curr_idx] + 1e-9)
+    dist_ma20 = abs(curr_close - curr_ma20) / (curr_ma20 + 1e-9)
+    
+    # Nền 1: Vol kiệt <= 0.85x, bám sát MA20 <= 3.0%, không gãy sâu
+    if (min_v_ratio1 <= 0.85) and (dist_ma20 <= 0.035) and (curr_vr <= 0.90):
+        reason = f"Đạt chuẩn Điểm Cược Nền 1 (Kiệt cung chân sóng: {min_v_ratio1:.2f}x TB10)"
+        return True, reason, {"base_type": "BASE1_CUOC", "min_v_ratio": min_v_ratio1}
+    else:
+        return False, f"Chưa đủ điều kiện cạn kiệt vol tại nền 1 (min_vol: {min_v_ratio1:.2f}x, curr_vol: {curr_vr:.2f}x)", {"base_type": "BASE1_NOT_MET"}
 
 def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
     """
@@ -129,6 +248,9 @@ def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
     point_name = "Tích Lũy Nền (Chưa có điểm mua)"
     point_code = "NONE"
     
+    # Kiểm tra Thuật toán số 2: Xác thực Nền Mới Sau Nhịp Nổ
+    is_base_valid, base_desc, base_meta = check_new_base_after_breakout(df, idx=len(df)-1)
+    
     # Đột biến thể tích sớm: Vol >= 2.5x TB10, TB10 >= 50,000 cp, tăng >= 1.5%, đóng nến >= 70% thân nến trên
     is_vol_surge = (vol >= 2.5 * avg_v10) and (avg_v10 >= 50000) and (chg_pct >= 1.5) and (close_pos >= 0.70)
     
@@ -136,8 +258,9 @@ def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
     is_breakout = ((chg_pct >= 2.3) and (vol_r10 >= 1.3) and (close_pos >= 0.70) and (close >= ma20)) or is_vol_surge
     # Pivot P1 (Đẩy nền): Bám sát MA20, vol nhú 0.85 - 2.2x, nến xanh tăng nhẹ-khá
     is_pivot = (0.6 <= chg_pct <= 4.0) and (-2.0 <= dist_ma20 <= 3.8) and (vol_r10 >= 0.85) and (close_pos >= 0.55) and obv_up
-    # Cược C1: Nền siết chặt, vol cạn kiệt <= 0.85x TB10, bám MA20/MA50
-    is_cuoc = (abs(dist_ma20) <= 2.5) and (vol_r10 <= 0.90) and (ma_conv <= 4.5) and (chg_pct >= -1.5)
+    
+    # Cược C1: BẮT BUỘC phải thỏa mãn Thuật toán số 2 (Đã setup nền mới tối thiểu 1 tuần nếu vừa nổ, có rũ bỏ & kiệt cung)
+    is_cuoc = bool(is_base_valid and (abs(dist_ma20) <= 3.5) and (vol_r10 <= 0.90) and (chg_pct >= -2.0))
     
     if is_vol_surge:
         point_name = "Điểm Đột Biến Thể Tích Sớm (Volume Surge B1)"
@@ -149,8 +272,15 @@ def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
         point_name = "Điểm Đẩy Nền Pivot (P1)"
         point_code = "P1"
     elif is_cuoc:
-        point_name = "Điểm Mua Cược Nền (C1)"
+        if base_meta.get("base_type") == "BASE2_CUOC":
+            point_name = f"Điểm Cược Nền 2 (Nền {base_meta.get('bars_since_bo', 5)} phiên kiệt cung)"
+        else:
+            point_name = "Điểm Mua Cược Nền (C1)"
         point_code = "C1"
+    else:
+        if base_meta.get("base_type") == "BREAKOUT_RECENT":
+            point_name = f"Sau Nổ ({base_meta.get('bars_since_bo', 1)} phiên) - Chờ Nền Mới"
+            point_code = "AFTER_BO"
 
     # 2. Đánh giá 8 Tiêu chí BDI (VSA Ông Bình Design Index)
     
@@ -288,6 +418,12 @@ def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
         "avg_vol10": round(avg_v10, 0),
         "vol_r10": round(vol_r10, 2),
         "is_volume_surge": bool(is_vol_surge),
+        "is_breakout": bool(is_breakout),
+        "is_pivot": bool(is_pivot),
+        "is_cuoc": bool(is_cuoc),
+        "is_base_valid": bool(is_base_valid),
+        "base_setup_desc": base_desc,
+        "base_setup_meta": base_meta,
         "low_buy": round(low, 2), # Giá thấp nhất làm Hard Stop
         "point_name": point_name,
         "point_code": point_code,

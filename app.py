@@ -486,10 +486,15 @@ async def scan_3_tiers(request: Request, target_date: Optional[str] = None):
                 tier = "tier3"
             elif (vol_r10 <= 1.5 and chg_pct > 0 and score >= 45) or "Pocket" in rec_desc or (is_upbar and close_high_ratio >= 0.65 and vol_r10 <= 1.3):
                 tier = "tier2"
-            elif vol_r10 < 1.0 or abs(chg_pct) <= 2.0 or score >= 40 or "Điểm Cược" in rec_desc:
-                tier = "tier1"
-            elif score >= 50:
-                tier = "tier1"
+            else:
+                from bdi_engine import check_new_base_after_breakout
+                is_base_valid, _, base_meta = check_new_base_after_breakout(df, idx_curr)
+                if base_meta.get("base_type") == "BREAKOUT_RECENT":
+                    tier = None # Vừa nổ xong < 5 phiên, chưa setup nền mới -> Không xếp vào Điểm Cược
+                elif "Điểm Cược" in rec_desc or is_base_valid:
+                    tier = "tier1"
+                elif (vol_r10 < 0.90 and abs(chg_pct) <= 2.0 and score >= 45 and is_base_valid):
+                    tier = "tier1"
                 
             return (tier, item)
         except Exception:

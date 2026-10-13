@@ -75,6 +75,9 @@ def scan_full_market(force_refresh=False) -> dict:
                 "point_code": res.get("point_code", "NONE"),
                 "point_name": res.get("point_name", "Tích lũy"),
                 "is_volume_surge": bool(res.get("is_volume_surge", False)),
+                "is_base_valid": bool(res.get("is_base_valid", False)),
+                "base_setup_desc": str(res.get("base_setup_desc", "")),
+                "base_setup_meta": res.get("base_setup_meta", {}),
                 "recommendation": res.get("recommendation", "Theo dõi"),
                 "low_buy": float(res.get("low_buy", 0.0)),
                 "criteria": res.get("criteria", [])
@@ -114,7 +117,8 @@ def scan_full_market(force_refresh=False) -> dict:
             daynen.append(it)
             
         # 4. Tầng 1: Điểm cược cạn vol (C1)
-        if it["point_code"] == "C1" or "Cược" in it["point_name"] or (it["vol_r10"] <= 0.85 and abs(it["chg_pct"]) <= 2.0 and it["bdi_score"] >= 45):
+        # BẮT BUỘC đạt chuẩn Thuật toán số 2: đã qua kiểm tra setup nền mới tối thiểu 1 tuần, có rũ bỏ & kiệt cung
+        if it["point_code"] == "C1" or ("Cược" in it["point_name"] and it.get("is_base_valid", False)):
             cuoc.append(it)
             
     # Sắp xếp theo BDI score giảm dần
@@ -239,13 +243,15 @@ def format_telegram_scan_result(scan_type: str, force_refresh=False) -> tuple[st
         
         chg_sign = "+" if chg > 0 else ""
         vol_tag = "🔥 NỔ VOL" if vol_r >= 2.5 else ("🌱 Vừa chớm" if vol_r >= 1.2 else "Kiệt cung")
+        base_desc_str = it.get("base_setup_desc", "")
+        base_line = f"\n• Cấu trúc nền: <i>{base_desc_str}</i>" if base_desc_str else ""
         tag_prefix = f"[{it['tag']}] " if "tag" in it else ""
         
         card = (
             f"<b>{idx}. {icon} {tag_prefix}<b>{sym}</b> ({sec})</b>\n"
             f"• Giá: <b>{p:.2f}</b> ({chg_sign}{chg:.2f}%) | Vol: <b>{vol_r:.2f}x</b> TB10 ({vol_tag})\n"
             f"• Điểm BDI: <b>{bdi}/100đ</b> ({it.get('recommendation', 'Mua')})\n"
-            f"• Tín hiệu: <i>{p_name}</i>\n"
+            f"• Tín hiệu: <i>{p_name}</i>{base_line}\n"
             f"• Mốc cắt lỗ (Low nến): <b>{low_p:.2f}</b> (Rủi ro: -{risk_pct:.1f}%)"
         )
         lines.append(card)
