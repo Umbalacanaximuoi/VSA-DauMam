@@ -1545,6 +1545,48 @@ function exportScreenerExcel() {
     document.body.removeChild(link);
 }
 
+// ==================== XUẤT WATCHLIST SANG AMIBROKER (TAB 3) ====================
+async function exportToAmiBroker() {
+    if (!currentScanData) {
+        alert("Chưa có dữ liệu quét thị trường. Vui lòng bấm '⚡ Bắt Đầu Quét' trước!");
+        return;
+    }
+    
+    // Thu thập tất cả các mã cổ phiếu từ kết quả quét hiện tại
+    const symbolSet = new Set();
+    
+    // Lấy toàn bộ mã từ tất cả các tầng/radar đã quét
+    (currentScanData.tier1_cuoc || []).forEach(it => { if (it.symbol) symbolSet.add(it.symbol.toUpperCase().trim()); });
+    (currentScanData.tier2_pocket || []).forEach(it => { if (it.symbol) symbolSet.add(it.symbol.toUpperCase().trim()); });
+    (currentScanData.tier3_pivot || []).forEach(it => { if (it.symbol) symbolSet.add(it.symbol.toUpperCase().trim()); });
+    (currentScanData.no2 || []).forEach(it => { if (it.symbol) symbolSet.add(it.symbol.toUpperCase().trim()); });
+    (currentScanData.super_stock || []).forEach(it => { if (it.symbol) symbolSet.add(it.symbol.toUpperCase().trim()); });
+    (currentScanData.ml_picks || []).forEach(it => { if (it.symbol) symbolSet.add(it.symbol.toUpperCase().trim()); });
+
+    const symbols = Array.from(symbolSet);
+    if (symbols.length === 0) {
+        alert("Không tìm thấy mã nào trong kết quả quét hiện tại để xuất!");
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/export_to_amibroker", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ symbols: symbols, list_name: "VSA_DauMam" })
+        });
+        const data = await res.json();
+        if (data.status === "success") {
+            alert(`🎉 CHUYỂN SANG AMIBROKER THÀNH CÔNG!\n\n• Đã nạp: ${data.count} mã cổ phiếu vào Watchlist duy nhất: 'VSA_DauMam'\n• Danh sách cũ trong AmiBroker đã được tự động làm mới hoàn toàn.\n• Vị trí file: C:\\Program Files (x86)\\AmiBroker\\MyNewData\\WatchLists\\VSA_DauMam.tls\n\n👉 Bạn chỉ cần vào AmiBroker -> Chuột phải vào Watch Lists -> Chọn 'Refresh' là xem được ngay!`);
+        } else {
+            alert("❌ Lỗi chuyển sang AmiBroker: " + (data.message || "Không xác định"));
+        }
+    } catch (err) {
+        alert("❌ Lỗi kết nối máy chủ: " + err);
+    }
+}
+window.exportToAmiBroker = exportToAmiBroker;
+
 // ==================== OPEN STORY TAB ====================
 function openStoryTab() {
     const sym = document.getElementById("symbolInput")?.value.trim().toUpperCase() || "TCB";

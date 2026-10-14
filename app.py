@@ -797,3 +797,104 @@ async def api_test_telegram(request: Request):
         "Hệ thống giám sát RRBDI đã sẵn sàng gửi cảnh báo theo đúng các khung giờ chiến lược."
     )
     return {"status": "success" if ok else "error", "message": "Gửi thành công! Kiểm tra Telegram của bạn." if ok else "Gửi thất bại. Vui lòng kiểm tra lại Token và Chat ID."}
+
+# ------------------------------------------------------------------------------
+# AMIBROKER WATCHLIST EXPORT ENDPOINT
+# ------------------------------------------------------------------------------
+class ExportAmiBrokerRequest(BaseModel):
+    symbols: Optional[List[str]] = None
+    list_name: Optional[str] = "VSA_DauMam"
+
+@app.post("/api/export_to_amibroker")
+async def api_export_to_amibroker(req: ExportAmiBrokerRequest, request: Request):
+    symbols = req.symbols or []
+    
+    # Nếu danh sách rỗng, thử đọc từ cache kết quả quét gần nhất
+    if not symbols:
+        candidates_file = os.path.join(BASE_DIR, "data_mart", "current_super_stock_scan.json")
+        if os.path.exists(candidates_file):
+            try:
+                with open(candidates_file, "r", encoding="utf-8") as f:
+                    cdata = json.load(f)
+                    if isinstance(cdata, list):
+                        symbols = [x.get("symbol") for x in cdata if x.get("symbol")]
+            except Exception:
+                pass
+                
+    # Làm sạch & loại bỏ trùng lặp
+    clean_symbols = []
+    seen = set()
+    for s in symbols:
+        s_clean = str(s).strip().upper()
+        if s_clean and s_clean not in seen:
+            seen.add(s_clean)
+            clean_symbols.append(s_clean)
+            
+    raw_name = req.list_name.strip() if req.list_name else "VSA_DauMam"
+    if raw_name.endswith(".tls"):
+        filename = raw_name
+        raw_name = raw_name[:-4]
+    else:
+        filename = f"{raw_name}.tls"
+        
+    exported_paths = []
+    
+    # 1. Ghi đè vào thư mục WatchLists chính của AmiBroker (MyNewData)
+    primary_dir = r"C:\Program Files (x86)\AmiBroker\MyNewData\WatchLists"
+    if os.path.exists(primary_dir):
+        file_path = os.path.join(primary_dir, filename)
+        with open(file_path, "w", encoding="utf-8") as f:
+            for sym in clean_symbols:
+                f.write(f"{sym}\n")
+        exported_paths.append(file_path)
+        
+        # Cập nhật index.txt để hiển thị trên cây thư mục AmiBroker
+        index_file = os.path.join(primary_dir, "index.txt")
+        existing_lines = []
+        if os.path.exists(index_file):
+            with open(index_file, "r", encoding="utf-8", errors="ignore") as f:
+                existing_lines = [l.strip() for l in f if l.strip()]
+        if raw_name not in existing_lines:
+            existing_lines.append(raw_name)
+            with open(index_file, "w", encoding="utf-8") as f:
+                for l in existing_lines:
+                    f.write(f"{l}\n")
+                    
+    # 2. Thư mục Data thứ cấp nếu có
+    sec_dir = r"C:\Program Files (x86)\AmiBroker\Data\WatchLists"
+    if os.path.exists(sec_dir):
+        file_path_sec = os.path.join(sec_dir, filename)
+        with open(file_path_sec, "w", encoding="utf-8") as f:
+            for sym in clean_symbols:
+                f.write(f"{sym}\n")
+        exported_paths.append(file_path_sec)
+        index_sec = os.path.join(sec_dir, "index.txt")
+        if os.path.exists(index_sec):
+            existing_sec = []
+            with open(index_sec, "r", encoding="utf-8", errors="ignore") as f:
+                existing_sec = [l.strip() for l in f if l.strip()]
+            if raw_name not in existing_sec:
+                existing_sec.append(raw_name)
+                with open(index_sec, "w", encoding="utf-8") as f:
+                    for l in existing_sec:
+                        f.write(f"{l}\n")
+                        
+    # 3. Bản sao lưu trong data_mart
+    backup_dir = os.path.join(BASE_DIR, "data_mart", "amibroker_watchlists")
+    os.makedirs(backup_dir, exist_ok=True)
+    with open(os.path.join(backup_dir, filename), "w", encoding="utf-8") as f:
+        for sym in clean_symbols:
+            f.write(f"{sym}\n")
+    with open(os.path.join(backup_dir, f"{raw_name}.txt"), "w", encoding="utf-8") as f:
+        for sym in clean_symbols:
+            f.write(f"{sym}\n")
+    exported_paths.append(os.path.join(backup_dir, filename))
+    
+    return {
+        "status": "success",
+        "count": len(clean_symbols),
+        "filename": filename,
+        "symbols": clean_symbols,
+        "exported_paths": exported_paths,
+        "message": f"Đã chuyển thành công {len(clean_symbols)} mã sang AmiBroker Watchlist '{raw_name}'!"
+    }
