@@ -808,16 +808,24 @@ window.switchView = switchView;
 window.switchMainTab = switchMainTab;
 
 
-// ==================== TAB 3: BỘ LỌC QUÉT SÀN 429 MÃ HOSE ====================
+// ==================== TAB 3: BỘ LỌC QUÉT TOÀN BỘ THỊ TRƯỜNG & SÓNG NGÀNH ====================
 async function runScreener() {
     const container = document.getElementById("scanResultsContent");
     if (!container) return;
-    container.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs">⚡ Đang quét toàn thị trường 429 mã HOSE theo chuẩn VSA &amp; Machine Learning... Vui lòng chờ vài giây...</div>';
+    
+    const exchangeSelect = document.getElementById("scanExchangeSelect");
+    const exchange = exchangeSelect ? exchangeSelect.value : "HOSE";
+    const exchangeText = exchangeSelect ? exchangeSelect.options[exchangeSelect.selectedIndex].text : "Sàn HOSE";
+    
+    container.innerHTML = `<div class="p-8 text-center text-slate-300 text-xs flex flex-col items-center justify-center gap-2">
+        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-400"></div>
+        <span>⚡ Đang quét toàn diện <b>${exchangeText}</b> theo chuẩn BDI Engine (Thuật toán số 2, Sbar, Kiệt cung)... Vui lòng chờ...</span>
+    </div>`;
     
     const scanDate = document.getElementById("scanDateInput")?.value;
-    let url = "/api/scan_3_tiers";
+    let url = `/api/scan_3_tiers?exchange=${exchange}`;
     if (scanDate) {
-        url += `?target_date=${scanDate}`;
+        url += `&target_date=${scanDate}`;
     }
     
     try {
@@ -1444,13 +1452,12 @@ function renderScanResults() {
         const volVal = p.vol_r10 || p.vol_ratio || 1.0;
         const volTag = volVal <= 0.85 ? '(Kiệt)' : (volVal >= 1.5 ? '(Đột biến)' : '');
         
-        // Tầng VSA badge
-        let tierBadge = '<span class="tag-pill bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 Tầng 1</span>';
-        if (p.desc?.includes("Pocket") || (volVal <= 1.4 && p.chg_pct > 0)) {
-            tierBadge = '<span class="tag-pill bg-amber-500/20 text-amber-400 border border-amber-500/30">🟡 Tầng 2</span>';
-        }
-        if (p.desc?.includes("Pivot") || p.desc?.includes("Nổ") || p.desc?.includes("Breakout") || (p.score && p.score >= 70)) {
-            tierBadge = '<span class="tag-pill bg-blue-500/20 text-blue-400 border border-blue-500/30">🔵 Tầng 3</span>';
+        // Tầng VSA badge chuẩn hóa BDI Engine
+        let tierBadge = '<span class="tag-pill bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">🟢 C1 Cược Nền</span>';
+        if (p.point_code === "P1" || p.desc?.includes("Pocket") || p.desc?.includes("Pivot (P1)")) {
+            tierBadge = '<span class="tag-pill bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold">🟡 P1 Pocket Pivot</span>';
+        } else if (p.point_code === "B1" || p.desc?.includes("Breakout") || p.desc?.includes("Nổ") || p.desc?.includes("Surge")) {
+            tierBadge = '<span class="tag-pill bg-blue-500/20 text-blue-400 border border-blue-500/30 font-bold">🔵 B1 Breakout</span>';
         }
 
         const mlProb = p.ml_prob ? `${p.ml_prob}%` : (p.score >= 70 ? '68.5%' : (p.score >= 50 ? '56.2%' : '42.0%'));

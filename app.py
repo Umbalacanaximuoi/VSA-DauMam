@@ -402,100 +402,107 @@ async def get_sector_wave(sector_id: str, request: Request, target_date: Optiona
 _SCAN_3_TIERS_CACHE = {}
 
 @app.get("/api/scan_3_tiers")
-async def scan_3_tiers(request: Request, target_date: Optional[str] = None):
+async def scan_3_tiers(request: Request, target_date: Optional[str] = None, exchange: Optional[str] = "HOSE"):
     lic = require_active_license(request)
-    cache_key = target_date or "latest"
+    exch = (exchange or "HOSE").upper().strip()
+    cache_key = f"{exch}_{target_date or 'latest'}"
     now_ts = time.time()
     if cache_key in _SCAN_3_TIERS_CACHE:
         cached_time, cached_res = _SCAN_3_TIERS_CACHE[cache_key]
         if now_ts - cached_time < 60:
             return cached_res
 
-    universe = [
-        "VCB", "BID", "CTG", "TCB", "MBB", "VPB", "ACB", "STB", "HDB", "SHB", "TPB", "SSB",
-        "SSI", "VND", "VCI", "HCM", "SHS", "MBS", "VIX", "FTS", "BSI", "CTS", "AGR",
-        "VHM", "VIC", "VRE", "NVL", "PDR", "DIG", "DXG", "KDH", "NLG", "KBC", "VPI", "HDC", "CEO", "TCH",
-        "GAS", "PVD", "PVS", "BSR", "PLX", "PVT", "PVC", "PVB", "OIL",
-        "MWG", "FRT", "PNJ", "DGW", "MSN", "PET", "VNM", "SAB", "DBC", "BAF",
-        "HPG", "HSG", "NKG", "VGS", "TLH", "KSB", "BMP",
-        "DGC", "CSV", "DPM", "DCM", "BFC", "LAS", "DDV", "GVR",
-        "GMD", "HAH", "VSC", "VOS", "VIP", "VTO"
-    ]
+    # Tải danh sách cổ phiếu theo sàn đã chọn
+    data_mart_dir = os.path.join(BASE_DIR, "data_mart")
+    universe = None
+    if exch == "HOSE":
+        fn = os.path.join(data_mart_dir, "hose_symbols.json")
+    elif exch == "HNX":
+        fn = os.path.join(data_mart_dir, "hnx_symbols.json")
+    elif exch == "UPCOM":
+        fn = os.path.join(data_mart_dir, "upcom_symbols.json")
+    elif exch == "ALL":
+        fn = os.path.join(data_mart_dir, "all_symbols.json")
+    else:
+        fn = None
 
-    # Tải trước bảng giá trực tuyến batch 1 lần duy nhất cho toàn bộ universe
-    if target_date is None:
+    if fn and os.path.exists(fn):
         try:
-            from evaluator import preload_live_price_board
-            preload_live_price_board(universe)
-        except (Exception, SystemExit, BaseException):
-            pass
+            with open(fn, "r", encoding="utf-8") as f:
+                universe = json.load(f)
+        except Exception:
+            universe = None
+
+    if not universe:
+        universe = [
+            "VCB", "BID", "CTG", "TCB", "MBB", "VPB", "ACB", "STB", "HDB", "SHB", "TPB", "SSB",
+            "SSI", "VND", "VCI", "HCM", "SHS", "MBS", "VIX", "FTS", "BSI", "CTS", "AGR",
+            "VHM", "VIC", "VRE", "NVL", "PDR", "DIG", "DXG", "KDH", "NLG", "KBC", "VPI", "HDC", "CEO", "TCH",
+            "GAS", "PVD", "PVS", "BSR", "PLX", "PVT", "PVC", "PVB", "OIL",
+            "MWG", "FRT", "PNJ", "DGW", "MSN", "PET", "VNM", "SAB", "DBC", "BAF",
+            "HPG", "HSG", "NKG", "VGS", "TLH", "KSB", "BMP",
+            "DGC", "CSV", "DPM", "DCM", "BFC", "LAS", "DDV", "GVR",
+            "GMD", "HAH", "VSC", "VOS", "VIP", "VTO"
+        ]
+
+    from bdi_engine import score_bdi_stock
 
     def scan_single(sym):
         try:
-            df = get_prepared_stock_df(sym, target_date_str=target_date)
-            if df is None or df.empty or len(df) < 20:
+            res = score_bdi_stock(sym, target_date_str=target_date)
+            if not res or res.get("status") == "error":
                 return None
                 
-            eval_res = evaluate_stock_from_df(df, sym, target_date_str=target_date)
-            row = df.iloc[-1]
-            idx_curr = len(df) - 1
-            prev_row = df.iloc[-2]
+            p_code = res.get("point_code", "NONE")
+            bdi_score = float(res.get("bdi_score", 0))
+            is_surge = bool(res.get("is_volume_surge", False))
+            is_breakout = bool(res.get("is_breakout", False))
+            is_pivot = bool(res.get("is_pivot", False))
+            is_cuoc = bool(res.get("is_cuoc", False))
+            is_base_valid = bool(res.get("is_base_valid", False))
+            base_meta = res.get("base_setup_meta", {})
             
-            close = float(row['close'])
-            prev_close = float(prev_row['close'])
-            chg_pct = float((close - prev_close) / (prev_close + 1e-9) * 100)
-            avg_vol10 = float(row['avg_vol10']) if 'avg_vol10' in row else 1.0
-            vol_r10 = float(row['volume'] / (avg_vol10 + 1e-9))
-            candle_len = float(row['high'] - row['low'])
-            close_high_ratio = float((close - float(row['low'])) / (candle_len + 1e-9)) if candle_len > 0 else 1.0
-            upper_wick_ratio = float((float(row['high']) - close) / (candle_len + 1e-9)) if candle_len > 0 else 0.0
-            is_upbar = bool(close > prev_close)
-            ma50_val = float(row['ma50']) if 'ma50' in row else 0.0
-            ma20_val = float(row['ma20']) if 'ma20' in row else 0.0
-            above_ma50 = bool(close >= ma50_val)
-            above_ma20 = bool(close >= ma20_val)
-            score = float(eval_res.get("score", 0))
-            rec_desc = str(eval_res.get("recommendation_desc", ""))
-            rsi_val = float(row['rsi']) if 'rsi' in row and pd.notna(row['rsi']) else 50.0
+            # Chuẩn hóa phân loại 3 tầng đồng nhất với Agent:
+            # - Tầng 3 (B1): Breakout nổ vol, Sbar/Combo Sbar, hoặc Volume Surge sớm
+            # - Tầng 2 (P1): Đẩy nền Pocket Pivot bám MA20
+            # - Tầng 1 (C1): Cược Trong Nền (Đạt chuẩn Thuật toán số 2 kiệt cung & rũ bỏ)
+            tier = None
+            if p_code == "B1" or is_surge or is_breakout:
+                tier = "tier3"
+            elif p_code == "P1" or is_pivot:
+                tier = "tier2"
+            elif p_code == "C1" or is_cuoc or (is_base_valid and bdi_score >= 50):
+                tier = "tier1"
             
-            had_base = False
-            for lb in range(max(0, idx_curr - 4), idx_curr):
-                eval_lb = evaluate_stock_from_df(df, sym, target_date_str=str(df.iloc[lb]['time']))
-                desc_lb = str(eval_lb.get("recommendation_desc", ""))
-                lb_row = df.iloc[lb]
-                lb_vol = float(lb_row['volume'])
-                lb_avg_vol10 = float(lb_row['avg_vol10']) if 'avg_vol10' in lb_row else 1.0
-                if "Điểm Cược" in desc_lb or "Điểm BU" in desc_lb or lb_vol < 0.85 * lb_avg_vol10:
-                    had_base = True
-                    break
-                    
+            if tier is None:
+                return None
+
             item = {
                 "symbol": str(sym),
-                "close": round(close, 2),
-                "chg_pct": round(chg_pct, 2),
-                "vol_r10": round(vol_r10, 2),
-                "score": round(score, 1),
-                "rsi": round(rsi_val, 1),
-                "above_ma50": above_ma50,
-                "above_ma20": above_ma20,
-                "desc": rec_desc
+                "close": res.get("close", 0.0),
+                "chg_pct": res.get("chg_pct", 0.0),
+                "vol": res.get("vol", 0),
+                "avg_vol10": res.get("avg_vol10", 0),
+                "vol_r10": res.get("vol_r10", 1.0),
+                "score": bdi_score,
+                "bdi_score": bdi_score,
+                "point_code": p_code if p_code != "NONE" else ("B1" if tier == "tier3" else ("P1" if tier == "tier2" else "C1")),
+                "point_name": res.get("point_name", ""),
+                "desc": res.get("point_name", ""),
+                "recommendation": res.get("recommendation", ""),
+                "action_code": res.get("action_code", "WATCH"),
+                "winrate_est": res.get("winrate_est", 50.0),
+                "rec_color": res.get("rec_color", "slate"),
+                "sector": res.get("sector", "Cơ bản"),
+                "is_volume_surge": is_surge,
+                "is_breakout": is_breakout,
+                "is_pivot": is_pivot,
+                "is_cuoc": is_cuoc,
+                "is_base_valid": is_base_valid,
+                "base_setup_desc": res.get("base_setup_desc", ""),
+                "base_setup_meta": base_meta,
+                "criteria": res.get("criteria", [])
             }
-            
-            tier = None
-            if "Điểm Nổ" in rec_desc or "Breakout" in rec_desc or "Điểm Pivot" in rec_desc or "Điểm BU" in rec_desc or score >= 70:
-                tier = "tier3"
-            elif (vol_r10 <= 1.5 and chg_pct > 0 and score >= 45) or "Pocket" in rec_desc or (is_upbar and close_high_ratio >= 0.65 and vol_r10 <= 1.3):
-                tier = "tier2"
-            else:
-                from bdi_engine import check_new_base_after_breakout
-                is_base_valid, _, base_meta = check_new_base_after_breakout(df, idx_curr)
-                if base_meta.get("base_type") == "BREAKOUT_RECENT":
-                    tier = None # Vừa nổ xong < 5 phiên, chưa setup nền mới -> Không xếp vào Điểm Cược
-                elif "Điểm Cược" in rec_desc or is_base_valid:
-                    tier = "tier1"
-                elif (vol_r10 < 0.90 and abs(chg_pct) <= 2.0 and score >= 45 and is_base_valid):
-                    tier = "tier1"
-                
             return (tier, item)
         except Exception:
             return None
@@ -504,7 +511,8 @@ async def scan_3_tiers(request: Request, target_date: Optional[str] = None):
     t2_pocket = []
     t3_pivot = []
     
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    workers = 12 if len(universe) > 100 else 6
+    with ThreadPoolExecutor(max_workers=workers) as executor:
         results = list(executor.map(scan_single, universe))
         
     for res in results:
@@ -517,16 +525,17 @@ async def scan_3_tiers(request: Request, target_date: Optional[str] = None):
             elif tier == "tier3":
                 t3_pivot.append(item)
                 
-    t1_cuoc.sort(key=lambda x: x['score'], reverse=True)
-    t2_pocket.sort(key=lambda x: x['score'], reverse=True)
-    t3_pivot.sort(key=lambda x: x['score'], reverse=True)
+    t1_cuoc.sort(key=lambda x: x['bdi_score'], reverse=True)
+    t2_pocket.sort(key=lambda x: x['bdi_score'], reverse=True)
+    t3_pivot.sort(key=lambda x: x['bdi_score'], reverse=True)
     
-    # Chấm điểm Machine Learning cho các ứng viên nổi bật
+    # Chấm điểm Machine Learning cho các ứng viên nổi bật nhất
     ml_picks = []
     try:
         from data_pipeline.ml_inference import VSAMLInferenceEngine
         ml_eng = VSAMLInferenceEngine()
-        all_candidates = t1_cuoc + t2_pocket + t3_pivot
+        # Lấy top các ứng viên điểm cao nhất để chấm xác suất ML
+        top_candidates = (t3_pivot[:25] + t2_pocket[:25] + t1_cuoc[:30])
         
         def score_candidate_ml(item):
             try:
@@ -540,7 +549,7 @@ async def scan_3_tiers(request: Request, target_date: Optional[str] = None):
                     item["ml_t1"] = round(p1, 1)
                     item["ml_t2"] = round(p2, 1)
                     item["ml_t3"] = round(p3, 1)
-                    return item if max_p >= 55.0 else None
+                    return item if max_p >= 52.0 else None
                 else:
                     item["ml_prob"] = 50.0
                     return None
@@ -548,9 +557,8 @@ async def scan_3_tiers(request: Request, target_date: Optional[str] = None):
                 item["ml_prob"] = 50.0
                 return None
 
-        # Dùng đa luồng chấm điểm ML song song siêu tốc
         with ThreadPoolExecutor(max_workers=6) as ml_executor:
-            ml_results = list(ml_executor.map(score_candidate_ml, all_candidates))
+            ml_results = list(ml_executor.map(score_candidate_ml, top_candidates))
             ml_picks = [it for it in ml_results if it is not None]
 
         ml_picks.sort(key=lambda x: x.get("ml_prob", 0), reverse=True)
@@ -568,6 +576,8 @@ async def scan_3_tiers(request: Request, target_date: Optional[str] = None):
 
     resp_payload = {
         "status": "success",
+        "exchange": exch,
+        "total_scanned": len(universe),
         "license_info": {"client": lic.get("client"), "days_left": lic.get("days_left")},
         "data": {
             "tier1_cuoc": t1_cuoc,

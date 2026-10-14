@@ -684,14 +684,21 @@
             <div class="card-dark p-4 bg-gradient-to-r from-slate-900 via-emerald-950/30 to-slate-900 flex flex-wrap justify-between items-center gap-3">
                 <div>
                     <h2 class="text-base font-extrabold text-white flex items-center gap-2">
-                        <span>⚡</span> TAB 3: BỘ LỌC QUÉT THỊ TRƯỜNG &amp; QUÉT SÓNG NGÀNH (429 MÃ HOSE)
+                        <span>⚡</span> TAB 3: BỘ LỌC QUÉT TOÀN BỘ THỊ TRƯỜNG &amp; SÓNG NGÀNH
                     </h2>
                     <p class="text-xs text-slate-400">Sàng lọc 3 tầng điểm mua kết hợp Thuyết Đàn Sói &amp; Sóng Ngành bảo trợ</p>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <select id="scanExchangeSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-emerald-400 font-bold focus:outline-none focus:border-emerald-500 cursor-pointer shadow-inner">
+                        <option value="HOSE" selected>Sàn HOSE (408 mã)</option>
+                        <option value="HNX">Sàn HNX (299 mã)</option>
+                        <option value="UPCOM">Sàn UPCOM (818 mã)</option>
+                        <option value="ALL">Toàn Thị Trường (1,525 mã)</option>
+                        <option value="CORE">Cổ Phiếu Trọng Tâm (76 mã)</option>
+                    </select>
                     <input type="date" id="scanDateInput" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
-                    <button class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-md" onclick="runScreener()">
-                        ⚡ Bắt Đầu Quét
+                    <button class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-md cursor-pointer flex items-center gap-1.5" onclick="runScreener()">
+                        <span>⚡</span> <span>Bắt Đầu Quét</span>
                     </button>
                     <button class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-3.5 py-2 rounded-lg border border-indigo-500/50 transition shadow-md flex items-center gap-1.5 cursor-pointer" onclick="exportToAmiBroker()">
                         <span>📈</span> <span>Chuyển Sang AmiBroker</span>

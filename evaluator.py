@@ -56,7 +56,33 @@ def load_stock_data(symbol: str, target_date_str: str = None) -> pd.DataFrame:
         except Exception:
             pass
             
-    # 1. Try vnstock API (Primary online source)
+    # 1. Try Metakit Binary Database (.dat) (Fastest local source, instant load, zero rate limit)
+    metakit_file = os.path.join(r"C:\MetakitData\AmiBroker\EOD\stock", f"{symbol}.dat")
+    if not os.path.exists(metakit_file):
+        metakit_file = os.path.join(r"C:\MetakitData\AmiBroker\EOD\index", f"{symbol}.dat")
+        
+    if os.path.exists(metakit_file):
+        try:
+            with open(metakit_file, "rb") as f:
+                header = f.read(32)
+                if len(header) >= 32:
+                    num_recs = struct.unpack("<I", header[:4])[0]
+                    records = []
+                    for _ in range(num_recs):
+                        rec = f.read(32)
+                        if len(rec) < 32:
+                            break
+                        date_int, pad, open_p, high_p, low_p, close_p, vol, val = struct.unpack("<IIfffffI", rec)
+                        date_str = f"{date_int // 10000:04d}-{(date_int % 10000) // 100 :02d}-{date_int % 100 :02d}"
+                        records.append((date_str, open_p, high_p, low_p, close_p, vol))
+                    df = pd.DataFrame(records, columns=['time', 'open', 'high', 'low', 'close', 'volume'])
+                    df = df.dropna(subset=['close', 'volume']).reset_index(drop=True)
+                    if not df.empty:
+                        return df
+        except Exception as e:
+            safe_print(f"Error reading Metakit data for {symbol}: {e}. Falling back to vnstock.")
+            
+    # 2. Try vnstock API (Secondary online source)
     try:
         safe_print(f"Fetching {symbol} data from vnstock 4.x API")
         from vnstock.ui import Market
@@ -76,19 +102,11 @@ def load_stock_data(symbol: str, target_date_str: str = None) -> pd.DataFrame:
             for col in ['open', 'high', 'low', 'close', 'volume']:
                 df[col] = pd.to_numeric(df[col], errors='coerce')
             df = df.dropna(subset=['close', 'volume']).reset_index(drop=True)
-            
-            # Check if target date is before the start of vnstock data
-            if target_dt is not None and not df.empty:
-                first_date = pd.to_datetime(df['time'].iloc[0])
-                if target_dt < first_date:
-                    safe_print(f"Target date {target_date_str} is before vnstock data start ({df['time'].iloc[0]}). Bypassing vnstock to load history.")
-                    raise ValueError("Target date is before vnstock data range")
-                    
             return df
     except Exception as e:
         safe_print(f"Vnstock 4.x API failed for {symbol}: {e}. Trying local CSV.")
 
-    # 2. Try Local CSV File (Secondary source)
+    # 3. Try Local CSV File (Tertiary source)
     base_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(__file__)
     data_dir = os.path.join(base_dir, 'data')
     if not os.path.exists(data_dir) and getattr(sys, 'frozen', False):
@@ -101,46 +119,23 @@ def load_stock_data(symbol: str, target_date_str: str = None) -> pd.DataFrame:
         try:
             safe_print(f"Loading local data for {symbol} from {local_file}")
             df = pd.read_csv(local_file)
-            
-            # Normalize column names to lowercase
             df.columns = [col.lower().strip() for col in df.columns]
-            
-            # Map common columns
             rename_map = {}
             for col in df.columns:
-                if col in ['ticker', 'symbol', 'ma']:
-                    rename_map[col] = 'symbol'
-                elif col in ['date/time', 'datetime', 'date', 'time', 'timestamp']:
-                    rename_map[col] = 'time'
-                elif col in ['open', 'op']:
-                    rename_map[col] = 'open'
-                elif col in ['high', 'hi']:
-                    rename_map[col] = 'high'
-                elif col in ['low', 'lo']:
-                    rename_map[col] = 'low'
-                elif col in ['close', 'cl']:
-                    rename_map[col] = 'close'
-                elif col in ['volume', 'vol', 'v']:
-                    rename_map[col] = 'volume'
-                    
+                if col in ['ticker', 'symbol', 'ma']: rename_map[col] = 'symbol'
+                elif col in ['date/time', 'datetime', 'date', 'time', 'timestamp']: rename_map[col] = 'time'
+                elif col in ['open', 'op']: rename_map[col] = 'open'
+                elif col in ['high', 'hi']: rename_map[col] = 'high'
+                elif col in ['low', 'lo']: rename_map[col] = 'low'
+                elif col in ['close', 'cl']: rename_map[col] = 'close'
+                elif col in ['volume', 'vol', 'v']: rename_map[col] = 'volume'
             df = df.rename(columns=rename_map)
-            
-            # Validate required columns
-            required = ['time', 'open', 'high', 'low', 'close', 'volume']
-            for req in required:
-                if req not in df.columns:
-                    raise ValueError(f"Missing required column: {req}")
-                    
-            # Ensure proper types
             for col in ['open', 'high', 'low', 'close', 'volume']:
                 df[col] = pd.to_numeric(df[col], errors='coerce')
-                
-            df = df.dropna(subset=['close', 'volume'])
-            # Sort by time
-            df = df.sort_values(by='time').reset_index(drop=True)
+            df = df.dropna(subset=['close', 'volume']).sort_values(by='time').reset_index(drop=True)
             return df
-        except Exception as e:
-            safe_print(f"Error loading local file: {e}. Trying Metakit database.")
+        except Exception:
+            pass
             
     # 3. Try Metakit Binary Database (.dat) (Fallback source)
     metakit_file = os.path.join(r"C:\MetakitData\AmiBroker\EOD\stock", f"{symbol}.dat")
