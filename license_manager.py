@@ -58,21 +58,27 @@ def get_hardware_id() -> str:
     formatted_hwid = f"DM-{raw_hash[0:4]}-{raw_hash[4:8]}-{raw_hash[8:12]}-{raw_hash[12:16]}"
     return formatted_hwid
 
+_TRUSTED_TIME_CACHE = {"dt": None, "ts": 0.0}
+
 def get_trusted_internet_time() -> datetime:
     """Fetches atomic clock time from trusted servers with rollback tamper detection."""
     vn_tz = timezone(timedelta(hours=7))
-    trusted_dt = None
+    now_mono = time.time()
     
+    if _TRUSTED_TIME_CACHE["dt"] is not None and (now_mono - _TRUSTED_TIME_CACHE["ts"] < 300):
+        elapsed = now_mono - _TRUSTED_TIME_CACHE["ts"]
+        return _TRUSTED_TIME_CACHE["dt"] + timedelta(seconds=elapsed)
+
+    trusted_dt = None
     time_servers = [
         "https://www.google.com",
-        "https://www.cloudflare.com",
-        "https://vnstocks.com"
+        "https://www.cloudflare.com"
     ]
     
     for url in time_servers:
         try:
             req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "VSA-DauMam-Verifier/1.0"})
-            with urllib.request.urlopen(req, timeout=2.5) as response:
+            with urllib.request.urlopen(req, timeout=1.5) as response:
                 date_header = response.headers.get("Date")
                 if date_header:
                     import email.utils
@@ -85,6 +91,9 @@ def get_trusted_internet_time() -> datetime:
     if trusted_dt is None:
         local_dt = datetime.now(vn_tz)
         trusted_dt = local_dt
+
+    _TRUSTED_TIME_CACHE["dt"] = trusted_dt
+    _TRUSTED_TIME_CACHE["ts"] = now_mono
 
     _check_and_update_tamper_state(trusted_dt)
     return trusted_dt

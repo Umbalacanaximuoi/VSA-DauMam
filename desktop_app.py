@@ -78,7 +78,7 @@ def wait_for_server(url, max_wait_sec=45):
     while time.time() - start_t < max_wait_sec:
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "VSA_Desktop_HealthCheck"})
-            with urllib.request.urlopen(req, timeout=1.0) as resp:
+            with urllib.request.urlopen(req, timeout=2.0) as resp:
                 if resp.status in (200, 403):
                     return True
         except Exception:
@@ -127,12 +127,12 @@ if __name__ == "__main__":
     target_url = "http://127.0.0.1:8000"
 
     # Check if server is already running on port 8000 (e.g. from previous instance)
-    server_already_running = wait_for_server(f"{target_url}/api/license/status", max_wait_sec=1.5)
+    server_already_running = wait_for_server(f"{target_url}/api/license/hwid", max_wait_sec=3.0)
 
     if not server_already_running:
         server_thread = threading.Thread(target=start_fastapi, daemon=True)
         server_thread.start()
-        server_ready = wait_for_server(f"{target_url}/api/license/status", max_wait_sec=45)
+        server_ready = wait_for_server(f"{target_url}/api/license/hwid", max_wait_sec=45)
     else:
         log_debug("Server port 8000 already active, reusing existing instance.")
         server_ready = True
