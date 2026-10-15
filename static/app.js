@@ -14,9 +14,21 @@ function getAuthHeaders() {
 document.addEventListener("DOMContentLoaded", () => {
     initHwid();
     checkLicenseStatus();
+    fetchWatchlistBadgeCount();
     // Heartbeat check every 3 minutes for remote revocation/renewal sync
     setInterval(checkLicenseStatus, 180000);
 });
+
+async function fetchWatchlistBadgeCount() {
+    try {
+        const res = await fetch("/api/bdi/watchlist");
+        const json = await res.json();
+        if (json.status === "success") {
+            const badge = document.getElementById("watchlistBadgeCount");
+            if (badge) badge.innerText = json.stats?.total_active ?? (json.data ? json.data.length : 0);
+        }
+    } catch (e) {}
+}
 
 async function initHwid() {
     try {
@@ -375,6 +387,9 @@ async function evaluateStock() {
                 resJson.zero_loss_metrics, 
                 resJson.zero_dinh_metrics
             );
+            if (resJson.bdi_score_data) {
+                renderCapitalPlan(resJson.bdi_score_data, resJson.data);
+            }
         }
     } catch (e) {
         console.error("Lỗi đánh giá cổ phiếu:", e);
@@ -600,6 +615,104 @@ function renderMLAndPatternData(ml, pat, zeroLoss, zeroDinh, data) {
         document.getElementById("pmPatternNote").innerText = pat?.message || "Hệ thống cần ít nhất 25 phiên giao dịch để trích xuất vân sóng giá và khối lượng.";
         const imgContainer = document.getElementById("pmImageContainer");
         if (imgContainer) imgContainer.classList.add("hidden");
+    }
+}
+
+function renderCapitalPlan(bdi, stockData) {
+    if (!bdi) return;
+    const curClose = stockData?.latest_price ?? stockData?.indicators?.price ?? bdi.close ?? 0;
+    const plan = bdi.capital_plan || {};
+    const pCode = bdi.point_code || "C1";
+    const stage = bdi.stage || 1;
+    
+    // 1. Badge Vị thế hiện tại
+    const stageBadge = document.getElementById("capCurrentStageBadge");
+    if (stageBadge) {
+        let badgeColor = "bg-purple-950 text-purple-300 border-purple-500/50";
+        let stageName = `C${stage}: CƯỢC TRONG NỀN`;
+        if (pCode.startsWith("P")) {
+            badgeColor = "bg-amber-950 text-amber-300 border-amber-500/50";
+            stageName = `P${stage}: ĐẨY NỀN POCKET (MA20)`;
+        } else if (pCode.startsWith("B")) {
+            badgeColor = "bg-sky-950 text-sky-300 border-sky-500/50";
+            stageName = `B${stage}: BREAKOUT VƯỢT ĐỈNH`;
+        }
+        stageBadge.className = `text-xs px-2.5 py-0.5 rounded-full font-black border ${badgeColor}`;
+        stageBadge.innerText = `${pCode}: ${stageName}`;
+    }
+    
+    // 2. Điểm chặn hòa vốn & cắt lỗ cứng
+    const beStop = plan.breakeven_stop || (pCode.startsWith("P") ? (plan.entry_c_price || curClose) : curClose);
+    const hardStop = plan.hard_stop || (curClose * 0.965);
+    const beEl = document.getElementById("capBreakevenPrice");
+    if (beEl) beEl.innerText = Number(beStop).toFixed(2);
+    const hsEl = document.getElementById("capHardStopPrice");
+    if (hsEl) hsEl.innerText = Number(hardStop).toFixed(2);
+    
+    // 3. Bước 1: Cược nền (C)
+    const cPrice = plan.entry_c_price || (curClose * 0.99);
+    const s1PriceEl = document.getElementById("capStep1Price");
+    if (s1PriceEl) s1PriceEl.innerText = Number(cPrice).toFixed(2);
+    const s1StopEl = document.getElementById("capStep1Stop");
+    if (s1StopEl) s1StopEl.innerText = Number(hardStop).toFixed(2);
+    
+    const cungText = document.getElementById("capCungText");
+    if (cungText) {
+        if (bdi.cung_desc) {
+            cungText.innerText = bdi.cung_desc;
+        } else if (bdi.has_no_supply && bdi.has_test_cung) {
+            cungText.innerText = "⭐ Hội tụ cặp nến No Supply & Test Cung kiệt vol";
+        } else if (bdi.has_test_cung) {
+            cungText.innerText = "✅ Xuất hiện nến Test Cung rút chân kiệt vol";
+        } else if (bdi.has_no_supply) {
+            cungText.innerText = "✅ Xuất hiện nến No Supply cạn kiệt bán";
+        } else {
+            cungText.innerText = "Đang siết nền chờ cặp nến kiệt cung";
+        }
+    }
+    
+    // 4. Bước 2: Đẩy nền (P)
+    const pPrice = plan.entry_p_price || (curClose * 1.015);
+    const s2PriceEl = document.getElementById("capStep2Price");
+    if (s2PriceEl) s2PriceEl.innerText = Number(pPrice).toFixed(2);
+    const s2StopEl = document.getElementById("capStep2Stop");
+    if (s2StopEl) s2StopEl.innerText = `${Number(cPrice).toFixed(2)} (Hòa vốn C)`;
+    
+    // 5. Bước 3: Breakout (B)
+    const bPrice = plan.entry_b_price || (curClose * 1.035);
+    const s3PriceEl = document.getElementById("capStep3Price");
+    if (s3PriceEl) s3PriceEl.innerText = Number(bPrice).toFixed(2);
+    const s3StopEl = document.getElementById("capStep3Stop");
+    if (s3StopEl) s3StopEl.innerText = `${(Number(bPrice) * 0.98).toFixed(2)} (>50% nến nổ)`;
+    
+    const tennisText = document.getElementById("capTennisText");
+    if (tennisText) {
+        if (bdi.is_tennis_ball) {
+            const bounce = bdi.tennis_ball_meta?.bounce_pct ? `+${bdi.tennis_ball_meta.bounce_pct.toFixed(1)}%` : '';
+            tennisText.innerHTML = `<strong>🎾 BẬT NẨY QUẢ BÓNG TENNIS ${bounce}!</strong> Sẵn sàng vượt đỉnh ngay`;
+        } else {
+            tennisText.innerText = "Chờ nhịp rũ sau Breakout B để kích hoạt quả bóng tennis";
+        }
+    }
+    
+    // Highlight active step box
+    const box1 = document.getElementById("capStep1Box");
+    const box2 = document.getElementById("capStep2Box");
+    const box3 = document.getElementById("capStep3Box");
+    if (box1) box1.className = pCode.startsWith("C") ? "p-3.5 rounded-xl border-2 border-emerald-400 bg-emerald-950/20 ring-2 ring-emerald-500/20 space-y-2 shadow-lg" : "p-3.5 rounded-xl border border-emerald-500/30 bg-slate-900/90 space-y-2 opacity-80";
+    if (box2) box2.className = pCode.startsWith("P") ? "p-3.5 rounded-xl border-2 border-amber-400 bg-amber-950/20 ring-2 ring-amber-500/20 space-y-2 shadow-lg" : "p-3.5 rounded-xl border border-amber-500/30 bg-slate-900/90 space-y-2 opacity-80";
+    if (box3) box3.className = pCode.startsWith("B") ? "p-3.5 rounded-xl border-2 border-sky-400 bg-sky-950/20 ring-2 ring-sky-500/20 space-y-2 shadow-lg" : "p-3.5 rounded-xl border border-sky-500/30 bg-slate-900/90 space-y-2 opacity-80";
+    
+    // 6. Lời khuyên hành động cụ thể
+    const adviceEl = document.getElementById("capActionAdvice");
+    if (adviceEl) {
+        if (pCode.startsWith("B")) {
+            adviceEl.innerText = `Cổ phiếu đang ở nhịp Bùng Nổ Vượt Đỉnh (${pCode}). Kích hoạt giải ngân Margin nếu cần, giữ kỷ luật bảo vệ Zero-Đỉnh tại ${Number(beStop).toFixed(2)}.`;
+        } else if (pCode.startsWith("P")) {
+            adviceEl.innerText = `Cổ phiếu xuất hiện điểm Đẩy Nền Pocket Pivot (${pCode}). Giải ngân tiếp 50% tiền mặt (đủ 100% tiền). Đã dời Stop Loss lên giá hòa vốn ${Number(cPrice).toFixed(2)} để rủi ro = 0!`;
+        } else {
+            adviceEl.innerText = `Cổ phiếu đang nén chặt trong nền (${pCode}). Ưu tiên giải ngân 50% tiền mặt thăm dò quanh ${Number(cPrice).toFixed(2)}, chặn lỗ đáy nền tại ${Number(hardStop).toFixed(2)}.`;
+        }
     }
 }
 
@@ -890,6 +1003,11 @@ async function runScreener() {
         const countSsEl = document.getElementById("countSuperStock");
         if (countSsEl) countSsEl.innerText = tss;
         
+        if (data && data.watchlist_stats) {
+            const badge = document.getElementById("watchlistBadgeCount");
+            if (badge) badge.innerText = data.watchlist_stats.total_active || 0;
+        }
+
         updateScanTabUI();
         renderScanResults();
     } catch (e) {
@@ -1448,41 +1566,65 @@ function renderScanResults() {
     allItems.forEach(p => {
         const chgColor = p.chg_pct > 0 ? 'text-emerald-400' : (p.chg_pct < 0 ? 'text-rose-400' : 'text-amber-400');
         const chgSign = p.chg_pct >= 0 ? '+' : '';
-        const volColor = (p.vol_r10 || p.vol_ratio || 1.0) <= 0.85 ? 'text-emerald-300' : ((p.vol_r10 || p.vol_ratio || 1.0) >= 1.5 ? 'text-amber-300' : 'text-slate-300');
         const volVal = p.vol_r10 || p.vol_ratio || 1.0;
+        const volColor = volVal <= 0.85 ? 'text-emerald-300' : (volVal >= 1.5 ? 'text-amber-300' : 'text-slate-300');
         const volTag = volVal <= 0.85 ? '(Kiệt)' : (volVal >= 1.5 ? '(Đột biến)' : '');
         
-        // Tầng VSA badge chuẩn hóa BDI Engine
-        let tierBadge = '<span class="tag-pill bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">🟢 C1 Cược Nền</span>';
-        if (p.point_code === "P1" || p.desc?.includes("Pocket") || p.desc?.includes("Pivot (P1)")) {
-            tierBadge = '<span class="tag-pill bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold">🟡 P1 Pocket Pivot</span>';
-        } else if (p.point_code === "B1" || p.desc?.includes("Breakout") || p.desc?.includes("Nổ") || p.desc?.includes("Surge")) {
-            tierBadge = '<span class="tag-pill bg-blue-500/20 text-blue-400 border border-blue-500/30 font-bold">🔵 B1 Breakout</span>';
+        // Vị thế điểm mua tiến trình: C1/C2, P1/P2, B1/B2
+        const pCode = p.point_code || (p.desc?.includes("Pocket") ? "P1" : (p.desc?.includes("Breakout") ? "B1" : "C1"));
+        let tierBadge = `<span class="tag-pill bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">🟢 ${pCode} Cược Nền</span>`;
+        let capitalPlanText = `<span class="text-emerald-400 font-bold block">50% Tiền Mặt</span><span class="text-[10px] text-slate-400">Cược nén nền</span>`;
+        
+        if (pCode.startsWith("P")) {
+            tierBadge = `<span class="tag-pill bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">🟡 ${pCode} Pocket Pivot</span>`;
+            capitalPlanText = `<span class="text-amber-400 font-bold block">Đủ 100% Tiền</span><span class="text-[10px] text-slate-400">+50% nhồi MA20</span>`;
+        } else if (pCode.startsWith("B")) {
+            tierBadge = `<span class="tag-pill bg-blue-500/20 text-blue-300 border border-blue-500/40 font-bold">🔵 ${pCode} Breakout</span>`;
+            capitalPlanText = `<span class="text-sky-400 font-bold block">Mở Margin</span><span class="text-[10px] text-slate-400">Vượt đỉnh nổ vol</span>`;
         }
 
-        const mlProb = p.ml_prob ? `${p.ml_prob}%` : (p.score >= 70 ? '68.5%' : (p.score >= 50 ? '56.2%' : '42.0%'));
-        const mlColor = parseFloat(mlProb) >= 60 ? 'text-emerald-400' : (parseFloat(mlProb) >= 50 ? 'text-sky-400' : 'text-slate-400');
-        const sector = SECTOR_NAMES[p.symbol] || p.sector || 'Cơ bản';
-
+        // Quả bóng Tennis chỉ xuất hiện sau B1 breakout
+        const tennisBadge = p.is_tennis_ball ? '<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-black bg-purple-950 text-purple-300 border border-purple-500/50 ml-1 animate-pulse" title="Quả bóng tennis bật nẩy mạnh sau nhịp rũ">🎾 Tennis</span>' : '';
         const isSurge = Boolean(volVal >= 2.5 || p.is_volume_surge);
-        const surgeBadge = isSurge ? '<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-950 text-rose-300 border border-rose-500/50 animate-pulse ml-1" title="Khối lượng bùng nổ >= 2.5x TB10">🔥 Vol Surge</span>' : '';
+        const surgeBadge = isSurge ? '<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-950 text-rose-300 border border-rose-500/50 ml-1" title="Khối lượng bùng nổ >= 2.5x TB10">🔥 Surge</span>' : '';
+
+        // Điểm chặn hòa vốn & cắt lỗ
+        const cPlan = p.capital_plan || {};
+        const beStopVal = cPlan.breakeven_stop ? Number(cPlan.breakeven_stop).toFixed(2) : (pCode.startsWith("P") ? Number(cPlan.entry_c_price || p.close).toFixed(2) : '--');
+        const hardStopVal = cPlan.hard_stop ? Number(cPlan.hard_stop).toFixed(2) : Number(p.close * 0.965).toFixed(2);
+
+        const mlProb = p.ml_prob ? `${p.ml_prob}%` : (p.score >= 70 ? '68.5%' : (p.score >= 50 ? '56.2%' : '42.0%'));
+        const mlColor = parseFloat(mlProb) >= 60 ? 'text-emerald-400 font-black' : (parseFloat(mlProb) >= 50 ? 'text-sky-400 font-bold' : 'text-slate-400');
+        const sector = SECTOR_NAMES[p.symbol] || p.sector || 'Cơ bản';
+        const cungInfo = p.cung_desc || p.desc || 'Tín hiệu VSA';
 
         rowsHtml += `
             <tr class="hover:bg-slate-800/50 transition cursor-pointer" onclick="inspectStockFromScreener('${p.symbol}')">
-                <td class="p-3 font-extrabold text-emerald-400 text-sm whitespace-nowrap">${p.symbol} ${surgeBadge}</td>
-                <td class="p-3 text-slate-400">${sector}</td>
-                <td class="p-3 text-right font-bold text-white">${p.close.toFixed(2)}</td>
-                <td class="p-3 text-right font-bold ${chgColor}">${chgSign}${p.chg_pct.toFixed(2)}%</td>
-                <td class="p-3 text-right ${volColor}">${volVal.toFixed(2)}x ${volTag}</td>
-                <td class="p-3 text-center">${tierBadge}</td>
-                <td class="p-3 text-center font-extrabold ${mlColor}">${mlProb}</td>
-                <td class="p-3 text-slate-300 max-w-[200px] truncate" title="${p.desc || ''}">${p.desc || 'Tín hiệu VSA'}</td>
+                <td class="p-3 font-extrabold text-white text-sm whitespace-nowrap">
+                    <div class="flex items-center gap-1">
+                        <span class="text-emerald-400 font-black">${p.symbol}</span>
+                        ${tennisBadge}
+                        ${surgeBadge}
+                    </div>
+                </td>
+                <td class="p-3 text-slate-400 text-xs">${sector}</td>
+                <td class="p-3 text-right font-bold text-white whitespace-nowrap">${p.close.toFixed(2)}</td>
+                <td class="p-3 text-right font-bold ${chgColor} whitespace-nowrap">${chgSign}${p.chg_pct.toFixed(2)}%</td>
+                <td class="p-3 text-right ${volColor} whitespace-nowrap">${volVal.toFixed(2)}x ${volTag}</td>
+                <td class="p-3 text-center whitespace-nowrap">${tierBadge}</td>
+                <td class="p-3 text-center whitespace-nowrap">${capitalPlanText}</td>
+                <td class="p-3 text-right whitespace-nowrap">
+                    <span class="text-amber-300 font-bold block text-xs">${beStopVal !== '--' ? beStopVal : hardStopVal}</span>
+                    <span class="text-[10px] text-rose-400 block">Stop: ${hardStopVal}</span>
+                </td>
+                <td class="p-3 text-center font-extrabold ${mlColor} whitespace-nowrap">${mlProb}</td>
+                <td class="p-3 text-slate-300 text-xs max-w-[180px] truncate" title="${cungInfo}">${cungInfo}</td>
                 <td class="p-3 text-center whitespace-nowrap">
-                    <button onclick="event.stopPropagation(); inspectStockFromScreener('${p.symbol}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2 py-1 rounded text-[11px] font-bold transition shadow-sm cursor-pointer">
+                    <button onclick="event.stopPropagation(); inspectStockFromScreener('${p.symbol}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-[11px] font-bold transition shadow-sm cursor-pointer" title="Soi chẩn đoán VSA, Mẫu hình thực chiến &amp; Lộ trình vốn">
                         Soi Tab 1
                     </button>
-                    <button onclick="event.stopPropagation(); quickTrackCurrentStock('${p.symbol}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[11px] font-bold transition shadow-sm ml-1 cursor-pointer border border-amber-400/30" title="Đưa cổ phiếu này vào Bot Telegram giám sát">
-                        📌 Giám sát
+                    <button onclick="event.stopPropagation(); quickAddStockToLivingWatchlist('${p.symbol}')" class="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 rounded text-[11px] font-bold transition shadow-sm ml-1 cursor-pointer border border-purple-400/30" title="Thêm cổ phiếu vào Danh Mục Theo Dõi">
+                        ⭐ Theo dõi
                     </button>
                 </td>
             </tr>
@@ -1492,15 +1634,17 @@ function renderScanResults() {
     container.innerHTML = `
         <table class="w-full text-left text-xs border-collapse">
             <thead>
-                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-800 text-[11px] uppercase tracking-wider">
+                <tr class="bg-slate-900/80 text-purple-300 border-b border-slate-800 text-[11px] uppercase tracking-wider font-extrabold">
                     <th class="p-3">Mã CP</th>
                     <th class="p-3">Ngành</th>
                     <th class="p-3 text-right">Giá</th>
                     <th class="p-3 text-right">% Chg</th>
                     <th class="p-3 text-right">Vol/TB10</th>
-                    <th class="p-3 text-center">Tầng VSA</th>
+                    <th class="p-3 text-center">Tín Hiệu</th>
+                    <th class="p-3 text-center">Lộ Trình Vốn</th>
+                    <th class="p-3 text-right">Chặn Hòa Vốn</th>
                     <th class="p-3 text-center">Xác Suất ML</th>
-                    <th class="p-3">Tín Hiệu / Mẫu Hình</th>
+                    <th class="p-3">Cặp Nến / Tín Hiệu</th>
                     <th class="p-3 text-center">Hành Động</th>
                 </tr>
             </thead>
@@ -1593,6 +1737,214 @@ async function exportToAmiBroker() {
     }
 }
 window.exportToAmiBroker = exportToAmiBroker;
+
+// ==================== DANH MỤC THEO DÕI SỐNG (ACTIVE LIVING WATCHLIST) ====================
+window.currentActiveWatchlistData = [];
+window.currentActiveWatchlistSymbols = [];
+
+async function openActiveWatchlistModal() {
+    const modal = document.getElementById("activeWatchlistModal");
+    if (modal) modal.classList.remove("hidden");
+    await refreshActiveWatchlist();
+}
+window.openActiveWatchlistModal = openActiveWatchlistModal;
+
+function closeActiveWatchlistModal() {
+    const modal = document.getElementById("activeWatchlistModal");
+    if (modal) modal.classList.add("hidden");
+}
+window.closeActiveWatchlistModal = closeActiveWatchlistModal;
+
+async function refreshActiveWatchlist() {
+    const tbody = document.getElementById("wlTableBody");
+    if (tbody) tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-purple-300 text-xs">🔄 Đang đồng bộ và rà soát kỷ luật danh mục sống...</td></tr>`;
+
+    try {
+        const res = await fetch("/api/bdi/watchlist");
+        const json = await res.json();
+        if (json.status !== "success") {
+            if (tbody) tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-rose-400 text-xs">Lỗi tải danh mục: ${json.message || 'Không thể kết nối'}</td></tr>`;
+            return;
+        }
+
+        const items = json.data || [];
+        const purged = json.purged || [];
+        const stats = json.stats || { total_active: items.length, newly_added: 0, purged_count: purged.length };
+
+        window.currentActiveWatchlistData = items;
+        window.currentActiveWatchlistSymbols = items.map(it => it.symbol);
+
+        // Cập nhật số đếm thống kê
+        const activeCountEl = document.getElementById("wlActiveCount");
+        if (activeCountEl) activeCountEl.innerText = stats.total_active || items.length;
+        const newCountEl = document.getElementById("wlNewAddedCount");
+        if (newCountEl) newCountEl.innerText = stats.newly_added || 0;
+        const purgedCountEl = document.getElementById("wlPurgedCount");
+        if (purgedCountEl) purgedCountEl.innerText = stats.purged_count || purged.length;
+        const badgeCount = document.getElementById("watchlistBadgeCount");
+        if (badgeCount) badgeCount.innerText = stats.total_active || items.length;
+
+        // Render các mã đang sống
+        if (items.length === 0) {
+            if (tbody) tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-slate-400 text-xs">Hiện chưa có cổ phiếu nào trong danh mục. Hãy quét thị trường để tự động nạp các mã chuẩn C1!</td></tr>`;
+        } else {
+            let html = '';
+            items.forEach(it => {
+                const sym = it.symbol;
+                const pnl = Number(it.pnl_pct || 0);
+                const pnlColor = pnl > 0 ? 'text-emerald-400 font-black' : (pnl < 0 ? 'text-rose-400 font-black' : 'text-slate-300 font-bold');
+                const pnlSign = pnl >= 0 ? '+' : '';
+                
+                const stage = it.stage_code || "C1";
+                let stageBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-black bg-emerald-950 text-emerald-300 border border-emerald-500/40">🟢 ${stage}</span>`;
+                let capPlanStr = `<span class="text-emerald-400 font-bold">50% Tiền</span>`;
+                if (stage.startsWith("P")) {
+                    stageBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-black bg-amber-950 text-amber-300 border border-amber-500/40">🟡 ${stage}</span>`;
+                    capPlanStr = `<span class="text-amber-400 font-bold">Đủ 100% Tiền</span>`;
+                } else if (stage.startsWith("B")) {
+                    stageBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-black bg-blue-950 text-blue-300 border border-blue-500/40">🔵 ${stage}</span>`;
+                    capPlanStr = `<span class="text-sky-400 font-bold">Margin</span>`;
+                }
+
+                const entryP = Number(it.entry_price || 0).toFixed(2);
+                const curP = Number(it.current_price || 0).toFixed(2);
+                const beStop = Number(it.breakeven_stop || entryP).toFixed(2);
+                const hardStop = Number(it.hard_stop || (entryP * 0.96)).toFixed(2);
+
+                html += `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="p-3 font-extrabold text-white text-sm">
+                            <span class="text-purple-300 font-black cursor-pointer hover:underline" onclick="inspectStockFromScreener('${sym}'); closeActiveWatchlistModal();">${sym}</span>
+                        </td>
+                        <td class="p-3 text-center whitespace-nowrap">${stageBadge}</td>
+                        <td class="p-3 text-right font-bold text-white whitespace-nowrap">${entryP}</td>
+                        <td class="p-3 text-right font-bold text-white whitespace-nowrap">${curP}</td>
+                        <td class="p-3 text-right ${pnlColor} whitespace-nowrap">${pnlSign}${pnl.toFixed(2)}%</td>
+                        <td class="p-3 text-right font-mono font-bold text-amber-300 whitespace-nowrap">${beStop}</td>
+                        <td class="p-3 text-right font-mono font-bold text-rose-400 whitespace-nowrap">${hardStop}</td>
+                        <td class="p-3 text-xs whitespace-nowrap">${capPlanStr}</td>
+                        <td class="p-3 text-slate-300 text-xs max-w-[220px] truncate" title="${it.status_note || ''}">${it.status_note || 'Duy trì xu hướng tăng'}</td>
+                        <td class="p-3 text-center whitespace-nowrap">
+                            <button onclick="inspectStockFromScreener('${sym}'); closeActiveWatchlistModal();" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition shadow-sm cursor-pointer" title="Chuyển sang Tab 1 xem chi tiết">
+                                Soi Tab 1
+                            </button>
+                            <button onclick="removeFromActiveWatchlist('${it.id || sym}')" class="px-2 py-1 rounded bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 text-[11px] font-bold transition shadow-sm ml-1 cursor-pointer border border-rose-500/30" title="Xóa khỏi danh mục theo dõi">
+                                ✕ Xóa
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if (tbody) tbody.innerHTML = html;
+        }
+
+        // Render danh sách đào thải (Purged)
+        const purgedContainer = document.getElementById("wlPurgedContainer");
+        const purgedList = document.getElementById("wlPurgedList");
+        if (purgedContainer && purgedList) {
+            if (purged && purged.length > 0) {
+                purgedContainer.classList.remove("hidden");
+                let purgedHtml = '';
+                purged.forEach(p => {
+                    const pnlVal = Number(p.pnl_pct || 0);
+                    const pnlStr = (pnlVal >= 0 ? '+' : '') + pnlVal.toFixed(2) + '%';
+                    const pnlCol = pnlVal >= 0 ? 'text-emerald-400' : 'text-rose-400';
+                    purgedHtml += `
+                        <div class="flex flex-wrap items-center justify-between p-2 rounded-lg bg-slate-900/90 border border-rose-500/20 text-xs">
+                            <div class="flex items-center gap-2">
+                                <strong class="text-rose-300 font-mono font-bold">${p.symbol}</strong>
+                                <span class="text-slate-400">| Giá thoát: <strong class="text-white">${Number(p.last_price || 0).toFixed(2)}</strong></span>
+                                <span class="${pnlCol} font-bold">(${pnlStr})</span>
+                                <span class="text-slate-400">| Ngày loại: ${p.purge_date || '--'}</span>
+                            </div>
+                            <div class="text-rose-300 italic font-medium">Lý do: ${p.reason || 'Vi phạm kỷ luật'}</div>
+                        </div>
+                    `;
+                });
+                purgedList.innerHTML = purgedHtml;
+            } else {
+                purgedContainer.classList.add("hidden");
+            }
+        }
+    } catch (e) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-rose-400 text-xs">Lỗi đồng bộ: ${e}</td></tr>`;
+    }
+}
+window.refreshActiveWatchlist = refreshActiveWatchlist;
+
+async function exportWatchlistToAmiBroker() {
+    const syms = window.currentActiveWatchlistSymbols || [];
+    if (syms.length === 0) {
+        alert("Danh mục theo dõi hiện đang trống. Hãy quét thị trường hoặc thêm mã trước khi xuất!");
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/export_to_amibroker", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ symbols: syms, list_name: "VSA_DauMam" })
+        });
+        const data = await res.json();
+        if (data.status === "success") {
+            alert(`🎉 XUẤT AMIBROKER THÀNH CÔNG!\n\n• Đã đồng bộ ${data.count} mã cổ phiếu đang duy trì xu hướng vào Watchlist duy nhất: 'VSA_DauMam'.\n• File: C:\\Program Files (x86)\\AmiBroker\\MyNewData\\WatchLists\\VSA_DauMam.tls\n\n👉 Bạn chỉ cần vào AmiBroker -> Chuột phải vào Watch Lists -> Chọn 'Refresh' là cập nhật ngay!`);
+        } else {
+            alert("❌ Lỗi xuất AmiBroker: " + (data.message || "Không xác định"));
+        }
+    } catch (err) {
+        alert("❌ Lỗi kết nối máy chủ: " + err);
+    }
+}
+window.exportWatchlistToAmiBroker = exportWatchlistToAmiBroker;
+
+async function quickAddStockToLivingWatchlist(sym) {
+    if (!sym) return;
+    try {
+        const res = await fetch("/api/bdi/watchlist", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ symbol: sym.toUpperCase().trim(), notes: "Theo dõi từ Screener" })
+        });
+        const data = await res.json();
+        if (data.status === "success") {
+            alert(`⭐ Đã thêm ${sym} vào Danh Mục Theo Dõi Sống thành công!`);
+            const badge = document.getElementById("watchlistBadgeCount");
+            if (badge) {
+                const cur = parseInt(badge.innerText) || 0;
+                badge.innerText = cur + 1;
+            }
+        } else {
+            alert("Thông báo: " + (data.message || "Không thể thêm"));
+        }
+    } catch (e) {
+        alert("Lỗi: " + e);
+    }
+}
+window.quickAddStockToLivingWatchlist = quickAddStockToLivingWatchlist;
+
+async function quickAddCurrentStockToWatchlist() {
+    const sym = document.getElementById("symbolInput")?.value.trim().toUpperCase() || "TCB";
+    await quickAddStockToLivingWatchlist(sym);
+}
+window.quickAddCurrentStockToWatchlist = quickAddCurrentStockToWatchlist;
+
+async function removeFromActiveWatchlist(symOrId) {
+    if (!confirm(`Bạn có chắc chắn muốn xóa ${symOrId} khỏi Danh Mục Theo Dõi?`)) return;
+    try {
+        const res = await fetch(`/api/bdi/watchlist/${encodeURIComponent(symOrId)}`, {
+            method: "DELETE"
+        });
+        const data = await res.json();
+        if (data.status === "success") {
+            await refreshActiveWatchlist();
+        } else {
+            alert("Lỗi: " + data.message);
+        }
+    } catch (e) {
+        alert("Lỗi xóa: " + e);
+    }
+}
+window.removeFromActiveWatchlist = removeFromActiveWatchlist;
 
 // ==================== OPEN STORY TAB ====================
 function openStoryTab() {

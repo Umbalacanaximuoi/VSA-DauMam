@@ -368,6 +368,14 @@ async def evaluate_stock(req: EvaluateRequest, request: Request):
             }
     except Exception:
         zero_dinh_metrics = None
+
+    # 4. Chấm điểm BDI Engine, Lộ trình vốn & Mẫu hình No Supply / Test Cung
+    bdi_score_data = None
+    try:
+        from bdi_engine import score_bdi_stock
+        bdi_score_data = score_bdi_stock(sym, target_date_str=target_d)
+    except Exception as e:
+        logging.error(f"Lỗi score_bdi_stock trong evaluate: {e}")
     
     return {
         "status": "success",
@@ -382,7 +390,8 @@ async def evaluate_stock(req: EvaluateRequest, request: Request):
         "ml_prediction": ml_pred,
         "pattern_match": pat_res,
         "zero_loss_metrics": zero_loss_metrics,
-        "zero_dinh_metrics": zero_dinh_metrics
+        "zero_dinh_metrics": zero_dinh_metrics,
+        "bdi_score_data": bdi_score_data
     }
 
 @app.get("/api/sector_wave/{sector_id}")
@@ -463,15 +472,15 @@ async def scan_3_tiers(request: Request, target_date: Optional[str] = None, exch
             base_meta = res.get("base_setup_meta", {})
             
             # Chuẩn hóa phân loại 3 tầng đồng nhất với Agent:
-            # - Tầng 3 (B1): Breakout nổ vol, Sbar/Combo Sbar, hoặc Volume Surge sớm
-            # - Tầng 2 (P1): Đẩy nền Pocket Pivot bám MA20
-            # - Tầng 1 (C1): Cược Trong Nền (Đạt chuẩn Thuật toán số 2 kiệt cung & rũ bỏ)
+            # - Tầng 3 (B1, B2...): Breakout nổ vol vượt đỉnh, Sbar/Combo Sbar, hoặc Volume Surge sớm
+            # - Tầng 2 (P1, P2...): Đẩy nền Pocket Pivot bám MA20
+            # - Tầng 1 (C1, C2...): Cược Trong Nền (Đạt chuẩn Thuật toán số 2 kiệt cung & rũ bỏ)
             tier = None
-            if p_code == "B1" or is_surge or is_breakout:
+            if p_code.startswith("B") or is_surge or is_breakout:
                 tier = "tier3"
-            elif p_code == "P1" or is_pivot:
+            elif p_code.startswith("P") or is_pivot:
                 tier = "tier2"
-            elif p_code == "C1" or is_cuoc or (is_base_valid and bdi_score >= 50):
+            elif p_code.startswith("C") or is_cuoc or (is_base_valid and bdi_score >= 50):
                 tier = "tier1"
             
             if tier is None:
@@ -486,9 +495,17 @@ async def scan_3_tiers(request: Request, target_date: Optional[str] = None, exch
                 "vol_r10": res.get("vol_r10", 1.0),
                 "score": bdi_score,
                 "bdi_score": bdi_score,
+                "stage": res.get("stage", 1),
+                "stage_name": res.get("stage_name", "Nền 1"),
                 "point_code": p_code if p_code != "NONE" else ("B1" if tier == "tier3" else ("P1" if tier == "tier2" else "C1")),
                 "point_name": res.get("point_name", ""),
                 "desc": res.get("point_name", ""),
+                "capital_plan": res.get("capital_plan", {}),
+                "is_tennis_ball": res.get("is_tennis_ball", False),
+                "tennis_ball_meta": res.get("tennis_ball_meta", {}),
+                "has_no_supply": res.get("has_no_supply", False),
+                "has_test_cung": res.get("has_test_cung", False),
+                "cung_desc": res.get("cung_desc", ""),
                 "recommendation": res.get("recommendation", ""),
                 "action_code": res.get("action_code", "WATCH"),
                 "winrate_est": res.get("winrate_est", 50.0),
@@ -574,11 +591,26 @@ async def scan_3_tiers(request: Request, target_date: Optional[str] = None, exch
     except Exception as e:
         logging.error(f"Lỗi lấy No2 candidates trong scan: {e}")
 
+    # Tự động đồng bộ và thanh lọc Danh Mục Theo Dõi (Active Living Watchlist)
+    watchlist_stats = {"total_active": 0, "newly_added": 0, "purged_count": 0}
+    try:
+        from bdi_engine import sync_active_living_watchlist
+        all_candidates = t1_cuoc + t2_pocket + t3_pivot
+        sync_res = sync_active_living_watchlist(candidates_list=all_candidates, target_date_str=target_date)
+        watchlist_stats = {
+            "total_active": sync_res.get("total_active", 0),
+            "newly_added": sync_res.get("newly_added", 0),
+            "purged_count": sync_res.get("purged_count", 0)
+        }
+    except Exception as e:
+        logging.error(f"Lỗi sync living watchlist trong scan: {e}")
+
     resp_payload = {
         "status": "success",
         "exchange": exch,
         "total_scanned": len(universe),
         "license_info": {"client": lic.get("client"), "days_left": lic.get("days_left")},
+        "watchlist_stats": watchlist_stats,
         "data": {
             "tier1_cuoc": t1_cuoc,
             "tier2_pocket": t2_pocket,
@@ -747,8 +779,25 @@ async def api_bdi_delete_tracked(pos_id: str, request: Request):
 @app.get("/api/bdi/watchlist")
 async def api_bdi_watchlist(request: Request):
     lic = require_active_license(request)
-    signals = evaluate_watchlist_signals()
-    return {"status": "success", "data": signals}
+    from bdi_engine import sync_active_living_watchlist
+    sync_res = sync_active_living_watchlist()
+    return {
+        "status": "success",
+        "data": sync_res.get("active_watchlist", []),
+        "purged": sync_res.get("purged_items", []),
+        "stats": {
+            "total_active": sync_res.get("total_active", 0),
+            "newly_added": sync_res.get("newly_added", 0),
+            "purged_count": sync_res.get("purged_count", 0)
+        }
+    }
+
+@app.post("/api/bdi/watchlist/sync")
+async def api_bdi_sync_watchlist(request: Request):
+    lic = require_active_license(request)
+    from bdi_engine import sync_active_living_watchlist
+    sync_res = sync_active_living_watchlist()
+    return {"status": "success", "result": sync_res}
 
 @app.post("/api/bdi/watchlist")
 async def api_bdi_add_watchlist(req: WatchlistAddRequest, request: Request):

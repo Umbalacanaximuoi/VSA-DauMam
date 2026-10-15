@@ -306,10 +306,131 @@ def check_rbar_exit_warning(df: pd.DataFrame, buy_date: str = None, buy_price: f
             
     return False, "Chưa xuất hiện Rbar đảo chiều", {}
 
+def check_no_supply_and_test_cung(df: pd.DataFrame, idx: int = None) -> tuple[bool, bool, str, dict]:
+    """
+    Kiểm tra sự xuất hiện của nến No Supply và nến Test Cung (VSA chuẩn hóa).
+    Đặc trưng tại Điểm Cược (C1, C2...):
+    - Nến No Supply: Thân nến hẹp, dao động nhỏ, Vol teo tóp kiệt quệ <= 0.85x TB10 (chứng minh cạn lực bán).
+    - Nến Test Cung: Nhúng sâu trong phiên rũ bỏ rồi rút chân đóng cửa nửa trên (close_pos >= 0.50), Vol cực thấp <= 0.85x TB10.
+    """
+    if df is None or len(df) < 15:
+        return False, False, "Không đủ dữ liệu", {}
+        
+    curr_idx = (len(df) - 1) if idx is None else idx
+    lookback = min(curr_idx, 3) # Xét trong 3 phiên gần nhất của nền
+    
+    has_no_supply = False
+    has_test_cung = False
+    ns_date = ""
+    tc_date = ""
+    
+    for i in range(curr_idx, max(0, curr_idx - lookback), -1):
+        row = df.iloc[i]
+        prev = df.iloc[i-1] if i > 0 else row
+        
+        c = float(row['close'])
+        o = float(row['open'])
+        h = float(row['high'])
+        l = float(row['low'])
+        v = float(row['volume'])
+        prev_v = float(prev['volume'])
+        avg_v10 = float(row['avg_vol10']) if 'avg_vol10' in row else v
+        
+        c_len = h - l
+        c_pos = (c - l) / (c_len + 1e-9) if c_len > 0 else 0.5
+        chg = (c - float(prev['close'])) / (float(prev['close']) + 1e-9) * 100.0
+        vr = v / (avg_v10 + 1e-9)
+        
+        # Tiêu chuẩn No Supply: thân hẹp, biên độ hẹp (-1.8% <= chg <= 0.8%), vol cạn kiệt <= 0.88x TB10
+        is_ns = (vr <= 0.88) and (-1.8 <= chg <= 0.8) and (v <= prev_v * 1.15) and (c_pos <= 0.65)
+        if is_ns and not has_no_supply:
+            has_no_supply = True
+            ns_date = str(row['time'])[:10] if 'time' in row else f"T-{curr_idx - i}"
+            
+        # Tiêu chuẩn Test Cung: nhúng xuống rồi rút chân đóng cao (c_pos >= 0.50), vol cạn <= 0.88x TB10
+        is_tc = (vr <= 0.88) and (c_pos >= 0.50) and (chg >= -1.2) and (h > l)
+        if is_tc and not has_test_cung:
+            has_test_cung = True
+            tc_date = str(row['time'])[:10] if 'time' in row else f"T-{curr_idx - i}"
+
+    notes = []
+    if has_no_supply: notes.append(f"No Supply ({ns_date})")
+    if has_test_cung: notes.append(f"Test Cung ({tc_date})")
+    
+    has_pair = has_no_supply and has_test_cung
+    desc = " + ".join(notes) if notes else "Nền nén chặt kiệt cung"
+    return has_no_supply, has_test_cung, desc, {"has_pair": has_pair, "ns_date": ns_date, "tc_date": tc_date}
+
+def check_tennis_ball_action(df: pd.DataFrame, idx: int = None) -> tuple[bool, str, dict]:
+    """
+    Xác định hành vi QUẢ BÓNG TENNIS (Tennis Ball Action).
+    ĐỊNH NGHĨA CHUẨN XÁC:
+    Quả bóng Tennis CHỈ XUẤT HIỆN SAU KHI ĐÃ CÓ ĐIỂM B1 THÀNH CÔNG!
+    Sau khi cổ phiếu đã có nhịp nổ dứt khoát (B1), thị trường chung có biến cố khiến cổ phiếu bị điều chỉnh rung lắc mạnh.
+    Nhưng ngay khi thị trường cân bằng ổn định, cổ phiếu LẬP TỨC BẬT TĂNG MẠNH NGAY (tăng >= 2.0%, đóng cửa nửa trên,
+    có thể vượt đỉnh luôn chỉ trong 1-2 phiên).
+    """
+    if df is None or len(df) < 20:
+        return False, "Không đủ dữ liệu", {}
+        
+    curr_idx = (len(df) - 1) if idx is None else idx
+    closes = df['close'].values
+    highs = df['high'].values
+    lows = df['low'].values
+    vols = df['volume'].values
+    avg_v10s = df['avg_vol10'].values if 'avg_vol10' in df.columns else vols
+    
+    # 1. Tìm phiên Breakout (B1) gần nhất trong 25 phiên qua
+    last_bo_idx = None
+    for lb in range(curr_idx - 1, max(0, curr_idx - 25), -1):
+        p_c = closes[max(0, lb - 1)]
+        b_c = closes[lb]
+        b_chg = (b_c - p_c) / (p_c + 1e-9) * 100.0
+        b_vr = vols[lb] / (avg_v10s[lb] + 1e-9)
+        if (b_chg >= 2.2 and b_vr >= 1.25) or (b_vr >= 1.7 and b_chg >= 1.5):
+            last_bo_idx = lb
+            break
+            
+    if last_bo_idx is None:
+        return False, "Chưa có nhịp nổ B1 làm mốc", {}
+        
+    bars_since_bo = curr_idx - last_bo_idx
+    if bars_since_bo < 2 or bars_since_bo > 20:
+        return False, f"Thời gian sau nổ ({bars_since_bo} phiên) ngoài khung Tennis Ball", {}
+        
+    bo_high = highs[last_bo_idx]
+    bo_close = closes[last_bo_idx]
+    
+    # 2. Kiểm tra có nhịp điều chỉnh / rũ bỏ giữa chừng
+    middle_lows = lows[last_bo_idx + 1 : curr_idx]
+    has_pullback = False
+    if len(middle_lows) > 0:
+        min_mid_low = np.min(middle_lows)
+        has_pullback = (min_mid_low < bo_close * 1.01)
+    else:
+        has_pullback = True
+        
+    # 3. Kiểm tra phiên hiện tại bật tăng mạnh (Quả bóng nảy)
+    curr_c = closes[curr_idx]
+    prev_c = closes[curr_idx - 1]
+    curr_chg = (curr_c - prev_c) / (prev_c + 1e-9) * 100.0
+    c_len = highs[curr_idx] - lows[curr_idx]
+    c_pos = (curr_c - lows[curr_idx]) / (c_len + 1e-9) if c_len > 0 else 0.5
+    curr_vr = vols[curr_idx] / (avg_v10s[curr_idx] + 1e-9)
+    
+    is_tennis_bounce = (curr_chg >= 2.0) and (c_pos >= 0.60) and (curr_vr >= 0.90) and has_pullback
+    tests_breakout_high = (curr_c >= bo_high * 0.985)
+    
+    if is_tennis_bounce and (tests_breakout_high or curr_chg >= 2.8):
+        reason = f"Bật tăng Quả Bóng Tennis (Sau nổ B1 {bars_since_bo} phiên, nảy lại +{curr_chg:.1f}%, Vol {curr_vr:.1f}x TB10)"
+        return True, reason, {"bars_since_bo": bars_since_bo, "bounce_chg": curr_chg, "bo_high": bo_high}
+        
+    return False, "Chưa xuất hiện nhịp nảy Quả Bóng Tennis", {}
+
 def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
     """
     Evaluates stock using the VSA Ông Bình Design Index (BDI) (0 - 100 points)
-    and identifies candidate buy points (Cược C1, Pivot P1, Breakout B1).
+    and identifies candidate buy points with progressive stage cycle (C1/P1/B1 -> C2/P2/B2...).
     """
     sym = symbol.upper().strip()
     df = get_prepared_stock_df(sym, target_date_str=target_date_str)
@@ -369,45 +490,59 @@ def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
     base_spread = float(row['base_spread_20']) if pd.notna(row['base_spread_20']) else 10.0
     ma_conv = float(row['ma_conv']) if pd.notna(row['ma_conv']) else 2.0
     
-    # 1. Nhận diện loại điểm mua VSA hiện tại
+    # 1. Nhận diện loại điểm mua VSA & Chu kỳ nhịp tăng (Stage n)
     point_name = "Tích Lũy Nền (Chưa có điểm mua)"
     point_code = "NONE"
     
     # Kiểm tra Thuật toán số 2: Xác thực Nền Mới Sau Nhịp Nổ
     is_base_valid, base_desc, base_meta = check_new_base_after_breakout(df, idx=len(df)-1)
     
-    # Breakout B1: Được đại diện bởi Sbar, LSbar hoặc Combo Sbar (khi có nền tích lũy, rũ bỏ & kiệt cung)
+    # Kiểm tra cặp nến No Supply & Test Cung
+    has_ns, has_tc, cung_desc, cung_meta = check_no_supply_and_test_cung(df, idx=len(df)-1)
+    
+    # Kiểm tra hành vi Quả bóng Tennis (chỉ xuất hiện sau khi đã có nổ B1)
+    is_tennis, tennis_desc, tennis_meta = check_tennis_ball_action(df, idx=len(df)-1)
+    
+    # Breakout B: Đại diện bởi Sbar, LSbar hoặc Combo Sbar
     is_sbar_bo, sbar_name, sbar_meta = check_sbar_breakout(df, idx=len(df)-1)
-    
-    # Đột biến thể tích sớm: Vol >= 2.5x TB10, TB10 >= 50,000 cp, tăng >= 1.5%, đóng nến >= 70% thân nến trên
     is_vol_surge = (vol >= 2.5 * avg_v10) and (avg_v10 >= 50000) and (chg_pct >= 1.5) and (close_pos >= 0.70)
-    
-    # Breakout B1: Nổ vol vượt cản, tăng >= 2.3%, đóng cao (close_pos >= 0.70) HOẶC đạt chuẩn Sbar/Combo Sbar Breakout
     is_breakout = is_sbar_bo or ((chg_pct >= 2.3) and (vol_r10 >= 1.3) and (close_pos >= 0.70) and (close >= ma20)) or is_vol_surge
-    # Pivot P1 (Đẩy nền): Bám sát MA20, vol nhú 0.85 - 2.2x, nến xanh tăng nhẹ-khá
+    
+    # Pivot P: Đẩy nền bám sát MA20, vol nhú 0.85 - 2.2x, nến xanh tăng nhẹ-khá
     is_pivot = (0.6 <= chg_pct <= 4.0) and (-2.0 <= dist_ma20 <= 3.8) and (vol_r10 >= 0.85) and (close_pos >= 0.55) and obv_up
     
-    # Cược C1: BẮT BUỘC phải thỏa mãn Thuật toán số 2 (Đã setup nền mới tối thiểu 1 tuần nếu vừa nổ, có rũ bỏ & kiệt cung)
+    # Cược C: Trong nền nén chặt, có No Supply hoặc Test Cung hoặc Thuật toán số 2
     is_cuoc = bool(is_base_valid and (abs(dist_ma20) <= 3.5) and (vol_r10 <= 0.90) and (chg_pct >= -2.0))
     
+    # Xác định số thứ tự chu kỳ (Stage: 1, 2, 3...)
+    stage_num = 1
+    if base_meta.get("base_type") == "BASE2_CUOC" or is_tennis:
+        stage_num = 2
+    elif base_meta.get("bars_since_bo", 0) >= 15:
+        stage_num = 2
+        
     if is_vol_surge:
-        point_name = "Điểm Đột Biến Thể Tích Sớm (Volume Surge B1)"
-        point_code = "B1"
+        point_name = f"Điểm Đột Biến Thể Tích Sớm (Volume Surge B{stage_num})"
+        point_code = f"B{stage_num}"
     elif is_sbar_bo:
-        point_name = f"Điểm Nổ Breakout ({sbar_name})"
-        point_code = "B1"
+        point_name = f"Điểm Nổ Breakout ({sbar_name} B{stage_num})"
+        point_code = f"B{stage_num}"
     elif is_breakout:
-        point_name = "Điểm Nổ Breakout (B1)"
-        point_code = "B1"
+        point_name = f"Điểm Nổ Breakout (B{stage_num})"
+        point_code = f"B{stage_num}"
+    elif is_tennis:
+        point_name = f"Quả Bóng Tennis Bật Tăng (Sau Nổ B{stage_num-1 if stage_num > 1 else 1})"
+        point_code = f"P{stage_num}" # Đẩy nền nảy vượt đỉnh
     elif is_pivot:
-        point_name = "Điểm Đẩy Nền Pivot (P1)"
-        point_code = "P1"
+        point_name = f"Điểm Đẩy Nền Pivot (P{stage_num})"
+        point_code = f"P{stage_num}"
     elif is_cuoc:
-        if base_meta.get("base_type") == "BASE2_CUOC":
-            point_name = f"Điểm Cược Nền 2 (Nền {base_meta.get('bars_since_bo', 5)} phiên kiệt cung)"
+        c_detail = f" ({cung_desc})" if (has_ns or has_tc) else " (Nén Chặt Kiệt Cung)"
+        if stage_num >= 2:
+            point_name = f"Điểm Cược Nền {stage_num}{c_detail}"
         else:
-            point_name = "Điểm Mua Cược Nền (C1)"
-        point_code = "C1"
+            point_name = f"Điểm Mua Cược Nền (C{stage_num}){c_detail}"
+        point_code = f"C{stage_num}"
     else:
         if base_meta.get("base_type") == "BREAKOUT_RECENT":
             point_name = f"Sau Nổ ({base_meta.get('bars_since_bo', 1)} phiên) - Chờ Nền Mới"
@@ -539,6 +674,44 @@ def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
         {"name": crit_ma_name, "max_points": 5, "points": score_ma, "passed": pass_ma, "desc": ma_desc}
     ]
     
+    # 3. Tính toán Lộ trình 3 Bước Giải Ngân (C: 50% -> P: 50% -> B: Margin) & Điểm chặn hòa vốn
+    recent_20 = df.iloc[max(0, len(df)-20):]
+    recent_high = float(recent_20['high'].max())
+    recent_low = float(recent_20['low'].min())
+    
+    c_entry_price = round(close, 2)
+    p_entry_price = round(ma20 * 1.015, 2)
+    b_entry_price = round(recent_high * 1.005, 2)
+    
+    # Hard stop khi mua C: Đáy nến thấp nhất gần đây
+    c_hard_stop = round(min(low, recent_low), 2)
+    c_risk_pct = round((c_hard_stop - close) / (close + 1e-9) * 100, 1)
+    
+    # Điểm chặn hòa vốn:
+    if point_code.startswith("B"):
+        be_stop = round((row['open'] + close) / 2.0, 2)
+        be_desc = f"Bảo vệ 50% thân nến nổ B{stage_num} ({be_stop})"
+    elif point_code.startswith("P"):
+        be_stop = round(c_entry_price, 2)
+        be_desc = f"Dời Stop Loss lên giá hòa vốn C{stage_num} ({be_stop})"
+    else:
+        be_stop = round(c_hard_stop, 2)
+        be_desc = f"Cắt lỗ cứng đáy nến/đáy nền C{stage_num} ({be_stop})"
+        
+    capital_plan = {
+        "stage": stage_num,
+        "entry_c_price": c_entry_price,
+        "entry_c_desc": f"C{stage_num}: 50% Tiền Mặt (Cược trong nền)",
+        "entry_p_price": p_entry_price,
+        "entry_p_desc": f"P{stage_num}: 50% Tiền Mặt Còn Lại (Đẩy nền Pocket nhú MA20 -> Đủ 100% tiền)",
+        "entry_b_price": b_entry_price,
+        "entry_b_desc": f"B{stage_num}: Mở Margin Nếu Cần (Sbar nổ vượt đỉnh)",
+        "hard_stop": c_hard_stop,
+        "hard_stop_pct": c_risk_pct,
+        "breakeven_stop": be_stop,
+        "breakeven_desc": be_desc
+    }
+    
     return {
         "status": "success",
         "symbol": sym,
@@ -558,6 +731,13 @@ def score_bdi_stock(symbol: str, target_date_str: str = None) -> dict:
         "low_buy": round(low, 2), # Giá thấp nhất làm Hard Stop
         "point_name": point_name,
         "point_code": point_code,
+        "stage": stage_num,
+        "capital_plan": capital_plan,
+        "is_tennis_ball": bool(is_tennis),
+        "tennis_ball_meta": tennis_meta,
+        "has_no_supply": bool(has_ns),
+        "has_test_cung": bool(has_tc),
+        "cung_desc": cung_desc,
         "bdi_score": total_bdi,
         "recommendation": rec_label,
         "action_code": action_code,
@@ -649,22 +829,36 @@ def save_watchlist_position(symbol: str, notes: str = "Theo dõi điểm mua") -
         cur_p = 10.0
         cur_bdi = 50
         point_name = "Chờ tín hiệu"
+        p_code = "C1"
+        c_plan = {}
     else:
         cur_p = float(bdi_res.get("close", 10.0))
         cur_bdi = int(bdi_res.get("bdi_score", 50))
         point_name = bdi_res.get("point_name", "Chờ tín hiệu")
+        p_code = bdi_res.get("point_code", "C1")
+        c_plan = bdi_res.get("capital_plan", {})
         
     w_id = f"WATCH_{sym}_{int(time.time())}"
+    hard_stop = float(c_plan.get("hard_stop") or (cur_p * 0.96))
+    be_stop = float(c_plan.get("breakeven_stop") or hard_stop)
+    
     new_item = {
         "id": w_id,
         "symbol": sym,
         "added_date": datetime.now().strftime("%Y-%m-%d"),
-        "added_price": cur_p,
-        "initial_bdi": cur_bdi,
-        "initial_point": point_name,
-        "notes": notes,
-        "status": "WATCHING",
-        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "entry_price": cur_p,
+        "current_price": cur_p,
+        "today_chg_pct": bdi_res.get("chg_pct", 0.0) if bdi_res.get("status") != "error" else 0.0,
+        "pnl_pct": 0.0,
+        "bdi_score": cur_bdi,
+        "stage_code": p_code,
+        "point_name": point_name,
+        "hard_stop": hard_stop,
+        "breakeven_stop": be_stop,
+        "capital_plan": c_plan,
+        "status_note": notes or f"Khởi tạo {p_code}: 50% Tiền Mặt (Chặn lỗ {hard_stop:.2f})",
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
     
     watchlist.insert(0, new_item)
@@ -672,7 +866,7 @@ def save_watchlist_position(symbol: str, notes: str = "Theo dõi điểm mua") -
     with open(WATCHLIST_FILE, "w", encoding="utf-8") as f:
         json.dump(watchlist, f, ensure_ascii=False, indent=2)
         
-    return {"status": "success", "message": f"Đã thêm {sym} vào Danh Sách Theo Dõi (Radar Bắt Điểm Mua)!", "data": new_item}
+    return {"status": "success", "message": f"Đã thêm {sym} vào Danh Mục Theo Dõi!", "data": new_item}
 
 def remove_watchlist_position(watch_id: str) -> bool:
     """Removes a position from watchlist radar."""
@@ -708,93 +902,169 @@ def convert_watchlist_to_bought(symbol: str, buy_price: float, shares_count: int
     remove_watchlist_position(sym)
     return {"status": "success", "message": f"Đã kích hoạt MỞ MUA {sym}! Vị thế đã chuyển sang Danh Mục Nắm Giữ & Quản Trị RRBDI.", "data": pos}
 
-def evaluate_watchlist_signals() -> list:
+def sync_active_living_watchlist(candidates_list: list = None, target_date_str: str = None) -> dict:
     """
-    Evaluates real-time buy signals, BDI scores, and current price for all watchlist items.
-    Specialized in scanning candidate BUY opportunities (Cược C1, Pivot P1, Vol Surge B1, Breakout B1).
+    Quản lý Danh Mục Theo Dõi Động (Smart Living Watchlist):
+    1. Tự động nạp: Cổ phiếu đạt điểm C1, C2... hôm nay -> tự động nạp vào.
+    2. Tự động thăng cấp: C1 -> P1 -> B1 -> C2...
+    3. Tự động đào thải (Auto-Purge):
+       + Thủng giá cắt lỗ cứng hoặc điểm chặn hòa vốn.
+       + Thủng 50% thân nến nổ Zero-Đỉnh (khi đang ở B).
+       + Xuất hiện Rbar đảo chiều hoặc vi phạm rủi ro lớn.
+       + Gãy MA50 & MA20 (Downtrend).
     """
+    os.makedirs(os.path.dirname(WATCHLIST_FILE), exist_ok=True)
     watchlist = load_watchlist_positions()
-    results = []
+    active_items = []
+    purged_items = []
+    seen_syms = set()
     
-    for w in watchlist:
-        sym = w["symbol"]
-        added_date = w.get("added_date", "")
-        added_price = float(w.get("added_price", 0.0))
+    # 1. Rà soát và cập nhật / đào thải các cổ phiếu đang có trong danh mục
+    for it in watchlist:
+        sym = it.get("symbol", "").upper().strip()
+        if not sym or sym in seen_syms:
+            continue
+        seen_syms.add(sym)
         
-        bdi_res = score_bdi_stock(sym)
-        if bdi_res.get("status") == "error":
-            w_copy = dict(w)
-            w_copy.update({
-                "current_price": added_price,
-                "chg_from_added": 0.0,
-                "today_chg_pct": 0.0,
-                "vol_r10": 1.0,
-                "current_bdi": w.get("initial_bdi", 50),
-                "point_code": "NONE",
-                "point_name": "Đang đồng bộ dữ liệu...",
-                "is_volume_surge": False,
-                "is_buy_ready": False,
-                "signal_badge": "⚪ Chờ tín hiệu",
-                "recommendation": "Đang cập nhật",
-                "action_advice": "Đang đồng bộ dữ liệu"
-            })
-            results.append(w_copy)
+        bdi_res = score_bdi_stock(sym, target_date_str=target_date_str)
+        if not bdi_res or bdi_res.get("status") == "error":
+            active_items.append(it)
             continue
             
-        cur_price = float(bdi_res.get("close", added_price))
-        cur_bdi = int(bdi_res.get("bdi_score", 50))
+        curr_close = float(bdi_res.get("close", it.get("current_price", 0)))
+        entry_price = float(it.get("entry_price", curr_close))
+        curr_bdi = float(bdi_res.get("bdi_score", 0))
         p_code = bdi_res.get("point_code", "NONE")
-        p_name = bdi_res.get("point_name", "Tích Lũy Nền")
-        is_vol_surge = bdi_res.get("is_volume_surge", False)
-        vol_r10 = float(bdi_res.get("vol_r10", 1.0))
-        chg_pct = float(bdi_res.get("chg_pct", 0.0))
+        c_plan = bdi_res.get("capital_plan", {})
         
-        chg_from_added = ((cur_price - added_price) / (added_price + 1e-9)) * 100 if added_price > 0 else 0.0
+        hard_stop = float(it.get("hard_stop") or c_plan.get("hard_stop") or (entry_price * 0.96))
+        be_stop = float(it.get("breakeven_stop") or c_plan.get("breakeven_stop") or hard_stop)
         
-        # Đánh giá điểm mua
-        is_buy_ready = False
-        signal_badge = "⚪ Chờ tín hiệu"
-        action_advice = "Tiếp tục quan sát siết nền và kiệt cung"
+        # Tiêu chí Auto-Purge
+        is_purged = False
+        purge_reason = ""
         
-        if is_vol_surge:
-            is_buy_ready = True
-            signal_badge = "🔥 NỔ VOL SURGE (≥2.5x)"
-            action_advice = "Dòng tiền lớn thức giấc! Mở mua thăm dò 1/8 hoặc giải ngân ngay."
-        elif p_code == "B1":
-            is_buy_ready = True
-            signal_badge = "🚀 ĐIỂM NỔ BREAKOUT (B1)"
-            action_advice = "Cổ phiếu bứt phá khỏi nền tích lũy! Điểm mua chuẩn gia tăng."
-        elif p_code == "P1":
-            is_buy_ready = True
-            signal_badge = "🌟 ĐẨY NỀN PIVOT (P1)"
-            action_advice = "Điểm nổ sớm bám sát MA20, vol nhú chuẩn. Thích hợp mở vị thế sớm."
-        elif p_code == "C1":
-            is_buy_ready = True
-            signal_badge = "🎯 CƯỢC NỀN SIẾT (C1)"
-            action_advice = "Nền giá siết chặt, vol cạn kiệt. Lấy vị thế cược 1/8 an toàn tại nền."
-        elif cur_bdi >= 75:
-            signal_badge = "🟢 TÍCH LŨY MẠNH (BDI cao)"
-            action_advice = "Điểm tích lũy cao. Chờ phiên nổ vol hoặc nhú Pivot để kích hoạt lệnh mua."
+        # A. Thủng điểm chặn hòa vốn / cắt lỗ cứng
+        effective_stop = be_stop if it.get("stage_code", "").startswith(("P", "B")) else hard_stop
+        if curr_close < effective_stop * 0.995:
+            is_purged = True
+            purge_reason = f"Đóng cửa ({curr_close:.2f}) thủng điểm chặn ({effective_stop:.2f})"
             
-        w_copy = dict(w)
-        w_copy.update({
-            "current_price": cur_price,
-            "chg_from_added": round(chg_from_added, 2),
-            "today_chg_pct": round(chg_pct, 2),
-            "vol_r10": round(vol_r10, 2),
-            "current_bdi": cur_bdi,
-            "point_code": p_code,
-            "point_name": p_name,
-            "is_volume_surge": is_vol_surge,
-            "is_buy_ready": is_buy_ready,
-            "signal_badge": signal_badge,
-            "recommendation": bdi_res.get("recommendation", "Theo dõi"),
-            "action_advice": action_advice,
-            "low_buy": bdi_res.get("low_buy", cur_price * 0.97)
-        })
-        results.append(w_copy)
+        # B. Nếu đang ở B mà vi phạm Zero-Đỉnh (gãy 50% thân nến nổ)
+        zero_crit = next((c for c in bdi_res.get("criteria", []) if "Zero-Đỉnh" in c.get("name", "")), None)
+        if not is_purged and it.get("stage_code", "").startswith("B") and zero_crit and not zero_crit.get("passed", True):
+            is_purged = True
+            purge_reason = f"Vi phạm Kỷ luật Zero-Đỉnh ({zero_crit.get('desc', 'Gãy 50% thân nến nổ')})"
+            
+        # C. Xuất hiện Rbar đảo chiều
+        try:
+            s_df = get_prepared_stock_df(sym, target_date_str)
+            if s_df is not None and not s_df.empty:
+                is_rbar, rbar_msg, _ = check_rbar_exit_warning(s_df)
+                if not is_purged and is_rbar:
+                    is_purged = True
+                    purge_reason = "Xuất hiện thanh Rbar đảo chiều dòng tiền"
+        except Exception:
+            pass
+            
+        if is_purged:
+            purged_items.append({
+                "symbol": sym,
+                "purge_date": str(bdi_res.get("date", datetime.now().strftime("%Y-%m-%d"))),
+                "last_price": curr_close,
+                "entry_price": entry_price,
+                "pnl_pct": round((curr_close - entry_price) / (entry_price + 1e-9) * 100, 2),
+                "reason": purge_reason
+            })
+            continue
+            
+        # Nâng cấp trạng thái nếu xuất hiện điểm mua mới
+        curr_stage = it.get("stage_code", "C1")
+        status_note = it.get("status_note", "Duy trì xu hướng tăng chuẩn")
+        if p_code.startswith("B") and not curr_stage.startswith("B"):
+            curr_stage = p_code
+            be_stop = float(c_plan.get("breakeven_stop", entry_price))
+            status_note = f"Thăng cấp {p_code}: Mở Margin nếu cần (Bảo vệ Zero-Đỉnh)"
+        elif p_code.startswith("P") and curr_stage.startswith("C"):
+            curr_stage = p_code
+            be_stop = entry_price # Dời Stop loss lên giá hòa vốn C1
+            status_note = f"Thăng cấp {p_code}: Đủ 100% tiền mặt (Dời Stop Loss lên hòa vốn)"
+        elif p_code.startswith("C") and int(p_code[1:] if p_code[1:].isdigit() else 1) > int(curr_stage[1:] if curr_stage[1:].isdigit() else 1):
+            curr_stage = p_code
+            status_note = f"Setup nền mới {p_code}: Cược 50% tiền mặt"
+            
+        pnl_pct = round((curr_close - entry_price) / (entry_price + 1e-9) * 100, 2)
         
-    return results
+        it.update({
+            "current_price": curr_close,
+            "today_chg_pct": bdi_res.get("chg_pct", 0.0),
+            "pnl_pct": pnl_pct,
+            "bdi_score": curr_bdi,
+            "stage_code": curr_stage,
+            "point_name": bdi_res.get("point_name", ""),
+            "hard_stop": hard_stop,
+            "breakeven_stop": be_stop,
+            "capital_plan": c_plan,
+            "status_note": status_note,
+            "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        })
+        active_items.append(it)
+        
+    # 2. Tự động nạp các cổ phiếu C1, C2... mới từ kết quả quét hôm nay
+    new_added_count = 0
+    if candidates_list:
+        for cand in candidates_list:
+            sym = cand.get("symbol", "").upper().strip()
+            p_code = cand.get("point_code", "")
+            if not sym or sym in seen_syms:
+                continue
+                
+            if p_code.startswith(("C", "P")):
+                seen_syms.add(sym)
+                c_price = float(cand.get("close", 0.0))
+                c_plan = cand.get("capital_plan", {})
+                hard_stop = float(c_plan.get("hard_stop") or (c_price * 0.96))
+                be_stop = float(c_plan.get("breakeven_stop") or hard_stop)
+                
+                new_item = {
+                    "id": f"WATCH_{sym}_{int(time.time())}",
+                    "symbol": sym,
+                    "added_date": str(cand.get("date", datetime.now().strftime("%Y-%m-%d"))),
+                    "entry_price": c_price,
+                    "current_price": c_price,
+                    "today_chg_pct": cand.get("chg_pct", 0.0),
+                    "pnl_pct": 0.0,
+                    "bdi_score": float(cand.get("bdi_score", cand.get("score", 70))),
+                    "stage_code": p_code,
+                    "point_name": cand.get("point_name", cand.get("desc", "")),
+                    "hard_stop": hard_stop,
+                    "breakeven_stop": be_stop,
+                    "capital_plan": c_plan,
+                    "status_note": f"Khởi tạo {p_code}: 50% Tiền Mặt (Chặn lỗ {hard_stop:.2f})",
+                    "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                }
+                active_items.insert(0, new_item)
+                new_added_count += 1
+                
+    active_items.sort(key=lambda x: (x.get("stage_code", ""), x.get("bdi_score", 0)), reverse=True)
+    
+    with open(WATCHLIST_FILE, "w", encoding="utf-8") as f:
+        json.dump(active_items, f, ensure_ascii=False, indent=2)
+        
+    return {
+        "status": "success",
+        "total_active": len(active_items),
+        "newly_added": new_added_count,
+        "purged_count": len(purged_items),
+        "purged_items": purged_items,
+        "active_watchlist": active_items
+    }
+
+def evaluate_watchlist_signals() -> list:
+    """Evaluates real-time buy signals for all active living watchlist items."""
+    sync_res = sync_active_living_watchlist()
+    return sync_res.get("active_watchlist", [])
 
 def quick_track_position(symbol: str, notes: str = "Theo dõi Bot") -> dict:
     """Redirects to save_watchlist_position so all UI 'Lưu Giám Sát' buttons populate the Watchlist."""
